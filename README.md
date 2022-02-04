@@ -10,7 +10,6 @@ A simple Android app counting remaining days until a given date
 - The UI sucks
 ## Items For Mental Consultation
 - Yes, I made the app in [Sketchware Pro](https://github.com/Sketchware-Pro/Sketchware-Pro) (on PHONE)
-- I am quite concerned that the following classes are completely useless and contribute nothing to the app, yet I am too lazy to verify this statement and eventually remove the class: BluetoothConnect, BluetoothController, RequestNetwork, RequestNetworkController
 ## How to build
 Seriously, I have no idea
 ## Credits

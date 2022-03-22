@@ -125,6 +125,18 @@ public class Util {
 		}
 	}
 	
+	  public static String getData(String key) {
+	      try {
+	        file = Util.getContext().getSharedPreferences("data", Activity.MODE_PRIVATE);  
+	          String value = file.getString(key, "");
+	          return value;
+	          
+	      } catch (Exception e) {
+	        Util.log(e.toString());
+	        throw new RuntimeException(e.getMessage());
+	      }     
+	  }
+	
     public static void resetData() {
 	  file.edit().remove("counterExists").commit();
       file.edit().remove("targetDay").commit();
@@ -136,6 +148,11 @@ public class Util {
 	
 	public static void startService(Context context) {
 		 Util.log("startService()");
+		 Util.log("enableNotification: " + Util.getData("enableNotification"));
+		 if(!Util.getData("enableNotification").equals("true")) {
+		     Util.log("Prevented starting service due to user preferences");
+		     return;
+		 }
 	     Intent intent = new Intent(context, NotificationService.class);
 		 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			    Util.log("Starting as a foreground service");

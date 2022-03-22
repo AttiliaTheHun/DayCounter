@@ -31,6 +31,12 @@
 			android:theme="@style/NoActionBar"
 			android:screenOrientation="portrait"/>
 		<activity
+			android:name=".SettingsActivity"
+			android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
+			android:hardwareAccelerated="true"
+			android:supportsPictureInPicture="true"
+			android:screenOrientation="portrait"/>
+		<activity
 			android:name="attilathehun.daycounter.Counter"
 			android:configChanges="orientation|screenSize"/>
 		<activity

@@ -44,7 +44,7 @@
 			android:layout_height="wrap_content"
 			android:padding="8dp"
 			android:gravity="center_horizontal"
-			android:text="version 1.0 Alpha - made by AttilaTheHun"
+			android:text="version 1.1 Alpha - made by AttilaTheHun"
 			android:textSize="12sp"
 			android:textColor="#000000"/>
 		<TextView

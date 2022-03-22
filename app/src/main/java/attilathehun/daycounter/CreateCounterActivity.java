@@ -177,7 +177,7 @@ public class CreateCounterActivity extends  Activity {
 	}
 	
 	public void _initLists () {
-		for(int i = 1; i < 31; i++){
+		for(int i = 1; i <= 31; i++){
 			  days.add(Integer.toString(i));
 		}
 		months.add("January");

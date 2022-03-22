@@ -102,6 +102,9 @@ public class MainActivity extends Activity implements DateChangedListener {
 		/** </SUBSTITUTE-CODE> **/
 		Util.log("\nMainActivity.onCreate()");
 		Util.setContext(getApplicationContext());
+		if (file.getString("enableNotification", "").equals("")) {
+			file.edit().putString("enableNotification", "true").commit();
+		}
 		NotificationService.createNotificationChannel();
 		Util.startService(getApplicationContext());
 		ServiceLauncher.addListener(this);
@@ -130,11 +133,8 @@ public class MainActivity extends Activity implements DateChangedListener {
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu){
-		menu.add(0, 0, 0, "Start Service");
-		menu.add(0, 1, 1, "Reset Data");
-		menu.add(0, 2, 2, "About");
-		menu.add(0, 3, 3, "View Log");
-		menu.add(0, 4, 4, "Clear Log");
+		menu.add(0, 0, 0, "About");
+		menu.add(0, 1, 1, "Settings");
 		return super.onCreateOptionsMenu(menu);
 	}
 	
@@ -144,14 +144,6 @@ public class MainActivity extends Activity implements DateChangedListener {
 		final String _title = (String) item.getTitle();
 		switch (_id){
 			case 0:
-			Util.startService(getApplicationContext());
-			break;
-			case 1:
-			Util.resetData();
-			showMessage("Restart the app now");
-			finish();
-			break;
-			case 2:
 			final AlertDialog aboutdialog = new AlertDialog.Builder(MainActivity.this).create();
 			View inflate = getLayoutInflater().inflate(R.layout.about_dialog, null);
 			aboutdialog.setView(inflate);
@@ -168,12 +160,10 @@ public class MainActivity extends Activity implements DateChangedListener {
 			aboutdialog.show();
 			
 			break;
-			case 3:
-			Util.viewLog(getApplicationContext());
-			break;
-			case 4:
-			Util.clearLog();
-			showMessage("log cleared");
+			case 1:
+			intent.setClass(getApplicationContext(), SettingsActivity.class);
+			startActivity(intent);
+			finish();
 			break;
 		}
 		return super.onOptionsItemSelected(item);

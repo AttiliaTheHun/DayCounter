@@ -8,6 +8,11 @@ import android.os.Bundle;
 
 import attilathehun.daycounter.Util;
 
+/**
+* This is the Activity for our launcher widget, honestly I have no idea what it does,
+* but the windget did not work until I added it, so I suggest not touching this piece
+* of code
+*/
 public class WidgetActivity extends Activity {
 		
 		@Override

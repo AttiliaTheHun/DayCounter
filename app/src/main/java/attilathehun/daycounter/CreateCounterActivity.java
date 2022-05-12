@@ -107,6 +107,7 @@ public class CreateCounterActivity extends  Activity {
 						file.edit().putInt("targetMonth", month_selector.getSelectedItemPosition()).commit();
 						file.edit().putInt("targetYear", Integer.parseInt(enter_year.getText().toString()) + Integer.parseInt(enter_target_age.getText().toString())).commit();
 						file.edit().putInt("targetAge", Integer.parseInt(enter_target_age.getText().toString())).commit();
+						Counter.refresh();
 						intent.setClass(getApplicationContext(), MainActivity.class);
 						startActivity(intent);
 						finish();

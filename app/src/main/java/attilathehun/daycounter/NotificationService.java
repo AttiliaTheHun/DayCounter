@@ -20,6 +20,9 @@ import attilathehun.daycounter.Counter;
 import attilathehun.daycounter.DateChangedListener;
 import attilathehun.daycounter.ServiceLauncher;
 
+/**
+* This class governs the notification service
+*/
 public class NotificationService extends Service implements DateChangedListener{
 	
      private static boolean isRunning = false;
@@ -133,6 +136,7 @@ public class NotificationService extends Service implements DateChangedListener{
 	   public static void createNotificationChannel() {
 		   NotificationService.createNotificationChannel(Util.getContext());
 	   }
+	   
 	   
 	   private void registerReceiver() {
 	      if(NotificationService.isRegistred()) {

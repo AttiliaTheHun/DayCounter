@@ -12,6 +12,11 @@ import attilathehun.daycounter.Util;
 import attilathehun.daycounter.DateChangedListener;
 import attilathehun.daycounter.Counter;
 
+
+/**
+* This class is making sure the app starts on boot and the calendar refreshes 
+* when necessary
+*/
 public class ServiceLauncher extends BroadcastReceiver {
         
 		private static List<DateChangedListener> listeners = new ArrayList<DateChangedListener>();
@@ -34,6 +39,9 @@ public class ServiceLauncher extends BroadcastReceiver {
 			
 		}
 		
+		/**
+		* Notifies all implementors of DateChangedListener that the date has changed
+		*/
 		private void notifyDateChanged() {
 			Util.log("notifyDateChanged()");
 			for(DateChangedListener listener : ServiceLauncher.listeners) {
@@ -41,6 +49,10 @@ public class ServiceLauncher extends BroadcastReceiver {
 			}
 	    }	
 		
+		/**
+		* Adds an article to the list of DateChangedListener implementors
+		* @param listener the listener to catalog
+		*/
 	    public static void addListener(DateChangedListener listener) {
 	        Util.log("addListener()");
             ServiceLauncher.listeners.add(listener);

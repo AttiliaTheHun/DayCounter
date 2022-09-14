@@ -21,7 +21,7 @@
 			android:paddingBottom="2dp"
 			android:text="Birth Date"
 			android:textSize="12sp"
-			android:textColor="#000000"/>
+			android:textColor="#000000" />
 		<LinearLayout
 			android:id="@+id/linear2"
 			android:layout_width="match_parent"
@@ -34,14 +34,14 @@
 				android:layout_height="wrap_content"
 				android:padding="8dp"
 				android:spinnerMode="dropdown"
-				android:layout_weight="1"/>
+				android:layout_weight="1" />
 			<Spinner
 				android:id="@+id/month_selector"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:padding="8dp"
 				android:spinnerMode="dropdown"
-				android:layout_weight="1"/>
+				android:layout_weight="1" />
 			<EditText
 				android:id="@+id/enter_year"
 				android:layout_width="wrap_content"
@@ -54,7 +54,7 @@
 				android:textColorHint="#607D8B"
 				android:inputType="numberSigned"
 				android:imeOptions="actionNext"
-				android:layout_weight="1"/>
+				android:layout_weight="1" />
 		</LinearLayout>
 		<TextView
 			android:id="@+id/textview2"
@@ -66,7 +66,7 @@
 			android:paddingBottom="2dp"
 			android:text="Highest Estimated Age"
 			android:textSize="12sp"
-			android:textColor="#000000"/>
+			android:textColor="#000000" />
 		<LinearLayout
 			android:id="@+id/linear3"
 			android:layout_width="match_parent"
@@ -86,7 +86,7 @@
 				android:singleLine="true"
 				android:inputType="numberSigned"
 				android:imeOptions="actionDone"
-				android:layout_weight="1"/>
+				android:layout_weight="1" />
 		</LinearLayout>
 		<Button
 			android:id="@+id/create_button"
@@ -98,6 +98,6 @@
 			android:gravity="center_horizontal|center_vertical"
 			android:text="Create Counter"
 			android:textSize="12sp"
-			android:textColor="#FFFFFF"/>
+			android:textColor="#FFFFFF" />
 	</LinearLayout>
 </LinearLayout>

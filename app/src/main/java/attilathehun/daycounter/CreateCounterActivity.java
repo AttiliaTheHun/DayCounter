@@ -18,6 +18,7 @@ import android.util.*;
 import android.webkit.*;
 import android.animation.*;
 import android.view.animation.*;
+import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 import java.text.*;
@@ -40,9 +41,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.DialogFragment;
 
-
-public class CreateCounterActivity extends  Activity { 
-	
+public class CreateCounterActivity extends Activity {
 	
 	private ArrayList<String> months = new ArrayList<>();
 	private ArrayList<String> days = new ArrayList<>();
@@ -60,6 +59,7 @@ public class CreateCounterActivity extends  Activity {
 	
 	private SharedPreferences file;
 	private Intent intent = new Intent();
+	
 	@Override
 	protected void onCreate(Bundle _savedInstanceState) {
 		super.onCreate(_savedInstanceState);
@@ -69,26 +69,25 @@ public class CreateCounterActivity extends  Activity {
 	}
 	
 	private void initialize(Bundle _savedInstanceState) {
-		
-		linear1 = (LinearLayout) findViewById(R.id.linear1);
-		textview1 = (TextView) findViewById(R.id.textview1);
-		linear2 = (LinearLayout) findViewById(R.id.linear2);
-		textview2 = (TextView) findViewById(R.id.textview2);
-		linear3 = (LinearLayout) findViewById(R.id.linear3);
-		create_button = (Button) findViewById(R.id.create_button);
-		day_selector = (Spinner) findViewById(R.id.day_selector);
-		month_selector = (Spinner) findViewById(R.id.month_selector);
-		enter_year = (EditText) findViewById(R.id.enter_year);
-		enter_target_age = (EditText) findViewById(R.id.enter_target_age);
+		linear1 = findViewById(R.id.linear1);
+		textview1 = findViewById(R.id.textview1);
+		linear2 = findViewById(R.id.linear2);
+		textview2 = findViewById(R.id.textview2);
+		linear3 = findViewById(R.id.linear3);
+		create_button = findViewById(R.id.create_button);
+		day_selector = findViewById(R.id.day_selector);
+		month_selector = findViewById(R.id.month_selector);
+		enter_year = findViewById(R.id.enter_year);
+		enter_target_age = findViewById(R.id.enter_target_age);
 		file = getSharedPreferences("data", Activity.MODE_PRIVATE);
 		
 		create_button.setOnLongClickListener(new View.OnLongClickListener() {
-			 @Override
-				public boolean onLongClick(View _view) {
+			@Override
+			public boolean onLongClick(View _view) {
 				SketchwareUtil.showMessage(getApplicationContext(), "Hmm?");
 				return true;
-				}
-			 });
+			}
+		});
 		
 		create_button.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -165,19 +164,7 @@ public class CreateCounterActivity extends  Activity {
 		((ArrayAdapter)month_selector.getAdapter()).notifyDataSetChanged();
 	}
 	
-	@Override
-	protected void onActivityResult(int _requestCode, int _resultCode, Intent _data) {
-		
-		super.onActivityResult(_requestCode, _resultCode, _data);
-		
-		switch (_requestCode) {
-			
-			default:
-			break;
-		}
-	}
-	
-	public void _initLists () {
+	public void _initLists() {
 		for(int i = 1; i <= 31; i++){
 			  days.add(Integer.toString(i));
 		}
@@ -233,18 +220,17 @@ public class CreateCounterActivity extends  Activity {
 	}
 	
 	@Deprecated
-	public float getDip(int _input){
+	public float getDip(int _input) {
 		return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, _input, getResources().getDisplayMetrics());
 	}
 	
 	@Deprecated
-	public int getDisplayWidthPixels(){
+	public int getDisplayWidthPixels() {
 		return getResources().getDisplayMetrics().widthPixels;
 	}
 	
 	@Deprecated
-	public int getDisplayHeightPixels(){
+	public int getDisplayHeightPixels() {
 		return getResources().getDisplayMetrics().heightPixels;
 	}
-	
 }

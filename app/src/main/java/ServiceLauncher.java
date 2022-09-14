@@ -26,7 +26,8 @@ public class ServiceLauncher extends BroadcastReceiver {
 			switch (intent.getAction()) {
 				case "android.intent.action.BOOT_COMPLETED" :
 			         Util.log("BOOT_COMPLETED received");
-			         Util.startService(context);
+			         Util.setContextIfNull(context);
+			         Util.startService();
 					 break;
 			    case "android.intent.action.DATE_CHANGED" :
 				     Util.log("DATE_CHANGED received");

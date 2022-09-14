@@ -18,6 +18,7 @@ import android.util.*;
 import android.webkit.*;
 import android.animation.*;
 import android.view.animation.*;
+import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 import java.text.*;
@@ -39,9 +40,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.DialogFragment;
 
-
-public class SettingsActivity extends  Activity { 
-	
+public class SettingsActivity extends Activity {
 	
 	private ArrayList<String> developer_options_list = new ArrayList<>();
 	private ArrayList<String> functional_options_list = new ArrayList<>();
@@ -55,6 +54,7 @@ public class SettingsActivity extends  Activity {
 	
 	private SharedPreferences sp;
 	private Intent intent = new Intent();
+	
 	@Override
 	protected void onCreate(Bundle _savedInstanceState) {
 		super.onCreate(_savedInstanceState);
@@ -64,13 +64,12 @@ public class SettingsActivity extends  Activity {
 	}
 	
 	private void initialize(Bundle _savedInstanceState) {
-		
-		textview1 = (TextView) findViewById(R.id.textview1);
-		linear1 = (LinearLayout) findViewById(R.id.linear1);
-		functional_options_view = (ListView) findViewById(R.id.functional_options_view);
-		textview3 = (TextView) findViewById(R.id.textview3);
-		developer_options_view = (ListView) findViewById(R.id.developer_options_view);
-		enable_notification_switch = (Switch) findViewById(R.id.enable_notification_switch);
+		textview1 = findViewById(R.id.textview1);
+		linear1 = findViewById(R.id.linear1);
+		functional_options_view = findViewById(R.id.functional_options_view);
+		textview3 = findViewById(R.id.textview3);
+		developer_options_view = findViewById(R.id.developer_options_view);
+		enable_notification_switch = findViewById(R.id.enable_notification_switch);
 		sp = getSharedPreferences("data", Activity.MODE_PRIVATE);
 		
 		functional_options_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -154,7 +153,7 @@ public class SettingsActivity extends  Activity {
 		
 		enable_notification_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
-			public void onCheckedChanged(CompoundButton _param1, boolean _param2)  {
+			public void onCheckedChanged(CompoundButton _param1, boolean _param2) {
 				final boolean _isChecked = _param2;
 				sp.edit().putString("enableNotification", String.valueOf(_isChecked)).commit();
 				if (_isChecked) {
@@ -176,24 +175,12 @@ public class SettingsActivity extends  Activity {
 	}
 	
 	@Override
-	protected void onActivityResult(int _requestCode, int _resultCode, Intent _data) {
-		
-		super.onActivityResult(_requestCode, _resultCode, _data);
-		
-		switch (_requestCode) {
-			
-			default:
-			break;
-		}
-	}
-	
-	@Override
 	public void onBackPressed() {
 		intent.setClass(getApplicationContext(), MainActivity.class);
 		startActivity(intent);
 		finish();
 	}
-	public void _initListsAndViews () {
+	public void _initListsAndViews() {
 		developer_options_list.add("Start service");
 		developer_options_list.add("View log");
 		developer_options_list.add("Clear log");
@@ -242,18 +229,17 @@ public class SettingsActivity extends  Activity {
 	}
 	
 	@Deprecated
-	public float getDip(int _input){
+	public float getDip(int _input) {
 		return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, _input, getResources().getDisplayMetrics());
 	}
 	
 	@Deprecated
-	public int getDisplayWidthPixels(){
+	public int getDisplayWidthPixels() {
 		return getResources().getDisplayMetrics().widthPixels;
 	}
 	
 	@Deprecated
-	public int getDisplayHeightPixels(){
+	public int getDisplayHeightPixels() {
 		return getResources().getDisplayMetrics().heightPixels;
 	}
-	
 }

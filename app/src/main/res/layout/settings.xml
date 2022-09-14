@@ -15,7 +15,7 @@
 		android:paddingBottom="2dp"
 		android:text="Functional"
 		android:textSize="12sp"
-		android:textColor="#CDDC39"/>
+		android:textColor="#CDDC39" />
 	<LinearLayout
 		android:id="@+id/linear1"
 		android:layout_width="match_parent"
@@ -31,14 +31,14 @@
 			android:text="Enable notification"
 			android:textSize="12sp"
 			android:textColor="#000000"
-			android:checked="true"/>
+			android:checked="true" />
 	</LinearLayout>
 	<ListView
 		android:id="@+id/functional_options_view"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:padding="8dp"
-		android:choiceMode="none"/>
+		android:choiceMode="none" />
 	<TextView
 		android:id="@+id/textview3"
 		android:layout_width="wrap_content"
@@ -49,11 +49,11 @@
 		android:paddingBottom="2dp"
 		android:text="Developer"
 		android:textSize="12sp"
-		android:textColor="#CDDC39"/>
+		android:textColor="#CDDC39" />
 	<ListView
 		android:id="@+id/developer_options_view"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:padding="8dp"
-		android:choiceMode="none"/>
+		android:choiceMode="none" />
 </LinearLayout>

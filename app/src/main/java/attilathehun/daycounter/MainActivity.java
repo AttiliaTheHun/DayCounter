@@ -18,6 +18,7 @@ import android.util.*;
 import android.webkit.*;
 import android.animation.*;
 import android.view.animation.*;
+import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 import java.text.*;
@@ -33,10 +34,9 @@ import android.app.FragmentManager;
 import android.app.DialogFragment;
 import attilathehun.daycounter.DateChangedListener;
 /** <SKETCHWARE-DANGER-ZONE> **/
-/*
+/*
 
-public class MainActivity extends  Activity { 
-
+public class MainActivity extends Activity {
 
 private double daysRemaining = 0;
 
@@ -46,6 +46,7 @@ private TextView days_indicator;
 
 private Intent intent = new Intent();
 private SharedPreferences file;
+
 @Override
 protected void onCreate(Bundle _savedInstanceState) {
 super.onCreate(_savedInstanceState);
@@ -55,10 +56,9 @@ initializeLogic();
 }
 
 private void initialize(Bundle _savedInstanceState) {
-
-linear1 = (LinearLayout) findViewById(R.id.linear1);
-linear2 = (LinearLayout) findViewById(R.id.linear2);
-days_indicator = (TextView) findViewById(R.id.days_indicator);
+linear1 = findViewById(R.id.linear1);
+linear2 = findViewById(R.id.linear2);
+days_indicator = findViewById(R.id.days_indicator);
 file = getSharedPreferences("data", Activity.MODE_PRIVATE);
 }
 
@@ -118,28 +118,16 @@ public class MainActivity extends Activity implements DateChangedListener {
 		}
 	}
 	
-	@Override
-	protected void onActivityResult(int _requestCode, int _resultCode, Intent _data) {
-		
-		super.onActivityResult(_requestCode, _resultCode, _data);
-		
-		switch (_requestCode) {
-			
-			default:
-			break;
-		}
-	}
-	
 	
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu){
+	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, 0, 0, "About");
 		menu.add(0, 1, 1, "Settings");
 		return super.onCreateOptionsMenu(menu);
 	}
 	
 	@Override
-		public boolean onOptionsItemSelected(MenuItem item){
+	public boolean onOptionsItemSelected(MenuItem item) {
 		final int _id = item.getItemId();
 		final String _title = (String) item.getTitle();
 		switch (_id){
@@ -168,7 +156,7 @@ public class MainActivity extends Activity implements DateChangedListener {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	public void _updateDaysIndicator () {
+	public void _updateDaysIndicator() {
 		daysRemaining = Counter.getDaysRemaining();
 		days_indicator.setText(String.valueOf((long)(daysRemaining)).concat(" days left!"));
 	}
@@ -211,18 +199,17 @@ public class MainActivity extends Activity implements DateChangedListener {
 	}
 	
 	@Deprecated
-	public float getDip(int _input){
+	public float getDip(int _input) {
 		return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, _input, getResources().getDisplayMetrics());
 	}
 	
 	@Deprecated
-	public int getDisplayWidthPixels(){
+	public int getDisplayWidthPixels() {
 		return getResources().getDisplayMetrics().widthPixels;
 	}
 	
 	@Deprecated
-	public int getDisplayHeightPixels(){
+	public int getDisplayHeightPixels() {
 		return getResources().getDisplayMetrics().heightPixels;
 	}
-	
 }

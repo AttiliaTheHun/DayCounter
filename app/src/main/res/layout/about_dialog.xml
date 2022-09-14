@@ -17,7 +17,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="60dp"
 			android:src="@drawable/icon"
-			android:scaleType="fitCenter"/>
+			android:scaleType="fitCenter" />
 		<TextView
 			android:id="@+id/textview1"
 			android:focusable="false"
@@ -27,7 +27,7 @@
 			android:gravity="center_horizontal"
 			android:text="Day Counter"
 			android:textSize="12sp"
-			android:textColor="#000000"/>
+			android:textColor="#000000" />
 		<TextView
 			android:id="@+id/textview2"
 			android:focusable="false"
@@ -36,7 +36,7 @@
 			android:padding="8dp"
 			android:text="The application is coded in Java using Sketchware Pro. It is meant to remind us every day of how short our lifes are. The icons are stolen from https://icons8.com."
 			android:textSize="12sp"
-			android:textColor="#000000"/>
+			android:textColor="#000000" />
 		<TextView
 			android:id="@+id/textview3"
 			android:focusable="false"
@@ -46,7 +46,7 @@
 			android:gravity="center_horizontal"
 			android:text="version 1.1 Alpha - made by AttilaTheHun"
 			android:textSize="12sp"
-			android:textColor="#000000"/>
+			android:textColor="#000000" />
 		<TextView
 			android:id="@+id/close_view"
 			android:focusable="false"
@@ -56,6 +56,6 @@
 			android:gravity="right"
 			android:text="Close"
 			android:textSize="12sp"
-			android:textColor="#1565C0"/>
+			android:textColor="#1565C0" />
 	</LinearLayout>
 </LinearLayout>

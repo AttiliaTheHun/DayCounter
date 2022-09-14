@@ -129,7 +129,7 @@ public class Util {
 	 * @param context the context object to use as default
 	 */
     public static void setContext(Context context) {
-		Util.context = context;
+		    Util.context = context;
     }
 	
 	/**

@@ -28,7 +28,6 @@
 			android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
 			android:hardwareAccelerated="true"
 			android:supportsPictureInPicture="true"
-			android:theme="@style/NoActionBar"
 			android:screenOrientation="portrait" />
 		<activity
 			android:name=".SettingsActivity"
@@ -52,6 +51,11 @@
 			android:name="org.apache.http.legacy"
 			android:required="false" />
 <activity android:name="attilathehun.daycounter.WidgetActivity">
+    <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+    </intent-filter>
+</activity>
+<activity android:name="attilathehun.daycounter.WidgetLightActivity">
     <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
     </intent-filter>
@@ -87,6 +91,16 @@
    <meta-data
      android:name="android.appwidget.provider"
      android:resource="@xml/widget_provider_info" />
+ </receiver>
+ <receiver
+   android:name="attilathehun.daycounter.WidgetLightProvider"
+   android:exported="false">
+   <intent-filter>
+     <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+   </intent-filter>
+   <meta-data
+     android:name="android.appwidget.provider"
+     android:resource="@xml/widget_light_provider_info" />
  </receiver>
 	</application>
 </manifest>

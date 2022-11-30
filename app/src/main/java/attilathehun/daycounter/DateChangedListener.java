@@ -1,8 +1,7 @@
 package attilathehun.daycounter;
 
 /**
-* An interface to be implemented by classes, that need to refresh their data/output
-* when today becomes yesterday
+* Communication channel between classes that are aware of date changing and classes that need to be aware of date changing.
 */
 public interface DateChangedListener {
         public void onDateChanged();

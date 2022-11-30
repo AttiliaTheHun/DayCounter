@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="days_left">Il vous reste %s jours!</string>
+    <string name="about">Sur l\'appli</string>
+    <string name="settings">Paramètres</string>
+    <string name="counters">Comptoirs</string>
+    <string name="service_label">Service de notifier</string>
+    <string name="service_description">This thing makes sure the notifications actually show and are updated</string>
+    <string name="notification_channel_name">Nombre de jours restants</string>
+    <string name="notification_channel_description">Displays the number of days left</string>
+    <string name="default_notification_name">Le temps est en cours</string>
+    <string name="january">Janvier</string>
+    <string name="february">Février </string>
+    <string name="march">Mars</string>
+    <string name="april">Avril</string>
+    <string name="may">Mai</string>
+    <string name="june">Juin</string>
+    <string name="july">Juillet</string>
+    <string name="august">Août </string>
+    <string name="september">Septembre</string>
+    <string name="october">Octobre</string>
+    <string name="november">Novembre</string>
+    <string name="december">Decembre</string>
+    <string name="counter_name_label">Nom du comptoir</string>
+    <string name="counter_name_hint">Jusqu\'à je suis 60</string>
+    <string name="birth_date_label">Date de naissance</string>
+    <string name="birth_date_year_label">Année</string>
+    <string name="highest_estimated_age_label">Highest estimated age</string>
+    <string name="highest_estimated_age_hint">Par exemple 65</string>
+    <string name="create_counter_label">Créer un comptoir</string>
+    <string name="widget_receiver_label">Indicateur statique</string>
+    <string name="show_notification_label">Montrer le notif</string>
+    <string name="counter_dialog_title">Choisis un comptoir</string>
+    <string name="counter_dialog_positive">Choisir</string>
+    <string name="counter_dialog_negative">Arrêter</string>
+</resources>

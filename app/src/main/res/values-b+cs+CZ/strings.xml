@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="days_left">Zbývá %n dnů!</string>
+    <string name="about">O aplikaci</string>
+    <string name="settings">Nastavení</string>
+    <string name="counters">Counters</string>
+    <string name="notification_channel_name">Počet zbývajících dnů</string>
+    <string name="notification_channel_description">Ukazuje, kolik dní zbývá</string>
+    <string name="default_notification_name">Čas běží</string>
+    <string name="january">Leden</string>
+    <string name="february">Únor</string>
+    <string name="march">Březen</string>
+    <string name="april">Duben</string>
+    <string name="may">Květen</string>
+    <string name="june">Červen</string>
+    <string name="july">Červenec</string>
+    <string name="august">Srpen </string>
+    <string name="september">Září</string>
+    <string name="october">Říjen</string>
+    <string name="november">Listopad</string>
+    <string name="december">Prosinec</string>
+</resources>

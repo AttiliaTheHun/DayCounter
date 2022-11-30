@@ -1,3 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="app_name" translatable="false">DayCounter</string>
+    <string name="app_name" translatable="false">DayCounter</string>
+    <string name="days_left">You have %s days left!</string>
+    <string name="about">About</string>
+    <string name="settings">Settings</string>
+    <string name="counters">Counters</string>
+    <string name="service_label">Notification Service</string>
+    <string name="service_description">This thing makes sure the notifications actually show and are updated</string>
+    <string name="notification_channel_name">Remaining days count</string>
+    <string name="notification_channel_description">Displays the number of days left</string>
+    <string name="default_notification_name">Time is running</string>
+    <string name="january">January</string>
+    <string name="february">February </string>
+    <string name="march">March</string>
+    <string name="april">April</string>
+    <string name="may">May</string>
+    <string name="june">June</string>
+    <string name="july">July</string>
+    <string name="august">August </string>
+    <string name="september">September</string>
+    <string name="october">October</string>
+    <string name="november">November</string>
+    <string name="december">December</string>
+    <string name="counter_name_label">Counter Name</string>
+    <string name="counter_name_hint">Until I am 60</string>
+    <string name="birth_date_label">Birth Date</string>
+    <string name="birth_date_year_label">Year</string>
+    <string name="highest_estimated_age_label">Highest estimated age</string>
+    <string name="highest_estimated_age_hint">For example 65</string>
+    <string name="create_counter_label">Create Counter</string>
+    <string name="widget_receiver_label">Static Indicator</string>
+     <string name="show_notification_label">Show notification</string>
+     <string name="counter_dialog_title">Choose a Counter</string>
+    <string name="counter_dialog_positive">Choose</string>
+    <string name="counter_dialog_negative">Cancel</string>
+
 </resources>

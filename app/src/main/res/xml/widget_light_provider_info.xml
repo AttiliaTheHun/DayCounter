@@ -3,8 +3,8 @@
 android:minWidth="200dp"
 android:minHeight="20dp"
 android:updatePeriodMillis="300000"
-android:initialLayout="@layout/widget"
+android:initialLayout="@layout/widget_light"
 android:resizeMode="horizontal|vertical"
-android:widgetCategory="home_screen"
-android:configure="attilathehun.daycounter.WidgetActivity">
+android:widgetCategory="home_screen" 
+android:configure="attilathehun.daycounter.WidgetLightActivity">
 </appwidget-provider>

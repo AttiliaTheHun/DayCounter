@@ -1,6 +1,11 @@
 package attilathehun.daycounter;
 
-import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.*;
+import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.app.*;
 import android.os.*;
 import android.view.*;
@@ -23,106 +28,113 @@ import java.util.*;
 import java.util.regex.*;
 import java.text.*;
 import org.json.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.ListView;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.content.Intent;
 import android.net.Uri;
-import android.content.SharedPreferences;
-import androidx.core.*;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.DialogFragment;
-import attilathehun.daycounter.DateChangedListener;
-/** <SKETCHWARE-DANGER-ZONE> **/
-/*
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.widget.AdapterView;
+import android.view.View;
+import com.google.gson.Gson;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.DialogFragment;
+import attilathehun.daycounter.Util;
+import attilathehun.daycounter.Counter;
+import attilathehun.daycounter.CounterManager;
 
-public class MainActivity extends Activity {
-
-private double daysRemaining = 0;
-
-private LinearLayout linear1;
-private LinearLayout linear2;
-private TextView days_indicator;
-
-private Intent intent = new Intent();
-private SharedPreferences file;
-
-@Override
-protected void onCreate(Bundle _savedInstanceState) {
-super.onCreate(_savedInstanceState);
-setContentView(R.layout.main);
-initialize(_savedInstanceState);
-initializeLogic();
-}
-
-private void initialize(Bundle _savedInstanceState) {
-linear1 = findViewById(R.id.linear1);
-linear2 = findViewById(R.id.linear2);
-days_indicator = findViewById(R.id.days_indicator);
-file = getSharedPreferences("data", Activity.MODE_PRIVATE);
-}
-
-private void initializeLogic() {
-*/
-/** </SKETCHWARE-DANGER-ZONE> **/
-/** <SUBSTITUTE-CODE> **/
-public class MainActivity extends Activity implements DateChangedListener {
+public class MainActivity extends AppCompatActivity {
 	
-	private double daysRemaining = 0;
+	private Toolbar _toolbar;
+	private AppBarLayout _app_bar;
+	private CoordinatorLayout _coordinator;
+	private FloatingActionButton _fab;
+	private String useless = "";
+	private  static List<CounterEventListener> listeners = new ArrayList<CounterEventListener>();
 	
-	private LinearLayout linear1;
+	private ArrayList<HashMap<String, Object>> counters = new ArrayList<>();
+	
 	private LinearLayout linear2;
-	private TextView days_indicator;
+	private ListView listview1;
 	
 	private Intent intent = new Intent();
-	private SharedPreferences file;
+	private AlertDialog.Builder d;
 	
-	 @Override
-	protected void onCreate (Bundle _savedInstanceState) {
-		super.onCreate(_savedInstanceState);
-		setContentView(R.layout.main);
-		initialize(_savedInstanceState);
-		initializeLogic();
+	@Override
+	protected void onCreate(Bundle _savedInstanceState) {
+		super.onCreate(_savedInstanceState);
+		setContentView(R.layout.main);
+		initialize(_savedInstanceState);
+		initializeLogic();
 	}
 	
-	private void initialize(Bundle _savedInstanceState) {
-		linear1 = (LinearLayout) findViewById(R.id.linear1);
-				linear2 = (LinearLayout) findViewById(R.id.linear2);
-				days_indicator = (TextView) findViewById(R.id.days_indicator);
-		file = getSharedPreferences("data", Activity.MODE_PRIVATE);
+	private void initialize(Bundle _savedInstanceState) {
+		_app_bar = findViewById(R.id._app_bar);
+		_coordinator = findViewById(R.id._coordinator);
+		_toolbar = findViewById(R.id._toolbar);
+		setSupportActionBar(_toolbar);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setHomeButtonEnabled(true);
+		_toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View _v) {
+				onBackPressed();
+			}
+		});
+		_fab = findViewById(R.id._fab);
+		
+		linear2 = findViewById(R.id.linear2);
+		listview1 = findViewById(R.id.listview1);
+		d = new AlertDialog.Builder(this);
+		
+		listview1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> _param1, View _param2, int _param3, long _param4) {
+				final int _position = _param3;
+				
+			}
+		});
+		
+		listview1.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> _param1, View _param2, int _param3, long _param4) {
+				final int _position = _param3;
+				
+				return true;
+			}
+		});
+		
+		_fab.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View _view) {
+				intent.setClass(getApplicationContext(), CreateCounterActivity.class);
+				startActivity(intent);
+				finish();
+			}
+		});
 	}
-	
-	public void onDateChanged() {
-		Util.log("MainActivity.onDateChanged()");
-		_updateDaysIndicator();
-	}
-	
 	
 	private void initializeLogic() {
-		/** </SUBSTITUTE-CODE> **/
-		Util.log("\nMainActivity.onCreate()");
-		Util.setContext(getApplicationContext());
-		if (file.getString("enableNotification", "").equals("")) {
-			file.edit().putString("enableNotification", "true").commit();
-		}
-		NotificationService.createNotificationChannel();
-		Util.startService(getApplicationContext());
-		ServiceLauncher.addListener(this);
-		if (file.getString("counterExists", "").equals("") || file.getString("counterExists", "").equals("false")) {
+		_init();
+		
+		if (!CounterManager.getInstance().counterExists()) {
 			intent.setClass(getApplicationContext(), CreateCounterActivity.class);
 			startActivity(intent);
 			finish();
 		}
-		else {
-			_updateDaysIndicator();
-		}
+		
 	}
 	
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(0, 0, 0, "About");
-		menu.add(0, 1, 1, "Settings");
+		menu.add(0, 0, 0, Util.getContext().getResources().getString(R.string.about));
+		menu.add(0, 1, 1, Util.getContext().getResources().getString(R.string.settings));
 		return super.onCreateOptionsMenu(menu);
 	}
 	
@@ -156,60 +168,152 @@ public class MainActivity extends Activity implements DateChangedListener {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	public void _updateDaysIndicator() {
-		daysRemaining = Counter.getDaysRemaining();
-		days_indicator.setText(String.valueOf((long)(daysRemaining)).concat(" days left!"));
+	public void _init() {
+		Util.setContext(getApplicationContext());
+		Util.startServiceIfNotRunning();
+		_refresh();
+		useless = new Gson().toJson(counters);
+		//Util.log(useless);
+	}
+	public static void addListener(CounterEventListener listener) {
+		MainActivity.listeners.add(listener);
 	}
 	
-	
-	@Deprecated
-	public void showMessage(String _s) {
-		Toast.makeText(getApplicationContext(), _s, Toast.LENGTH_SHORT).show();
-	}
-	
-	@Deprecated
-	public int getLocationX(View _v) {
-		int _location[] = new int[2];
-		_v.getLocationInWindow(_location);
-		return _location[0];
-	}
-	
-	@Deprecated
-	public int getLocationY(View _v) {
-		int _location[] = new int[2];
-		_v.getLocationInWindow(_location);
-		return _location[1];
-	}
-	
-	@Deprecated
-	public int getRandom(int _min, int _max) {
-		Random random = new Random();
-		return random.nextInt(_max - _min + 1) + _min;
-	}
-	
-	@Deprecated
-	public ArrayList<Double> getCheckedItemPositionsToArray(ListView _list) {
-		ArrayList<Double> _result = new ArrayList<Double>();
-		SparseBooleanArray _arr = _list.getCheckedItemPositions();
-		for (int _iIdx = 0; _iIdx < _arr.size(); _iIdx++) {
-			if (_arr.valueAt(_iIdx))
-			_result.add((double)_arr.keyAt(_iIdx));
+	private static void notifyCounterNotificationStateChanged(Counter counter) {
+		for (CounterEventListener listener : MainActivity.listeners) {
+			listener.onCounterNotificationStateChanged(counter);
 		}
-		return _result;
+	}
+	private static void notifyCounterRemoved(Counter counter) {
+		for (CounterEventListener listener : MainActivity.listeners) {
+			listener.onCounterRemoved(counter);
+		}
 	}
 	
-	@Deprecated
-	public float getDip(int _input) {
-		return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, _input, getResources().getDisplayMetrics());
-	}
 	
-	@Deprecated
-	public int getDisplayWidthPixels() {
-		return getResources().getDisplayMetrics().widthPixels;
+	public void _refresh() {
+		counters = CounterManager.getInstance().getCountersData();
+		listview1.setAdapter(new Listview1Adapter(counters));
+		((BaseAdapter)listview1.getAdapter()).notifyDataSetChanged();
+		/*
+}
+
+public class Listview1Adapter extends BaseAdapter {
+
+ArrayList<HashMap<String, Object>> _data;
+
+public Listview1Adapter(ArrayList<HashMap<String, Object>> _arr) {
+_data = _arr;
+}
+
+@Override
+public int getCount() {
+return _data.size();
+}
+
+@Override
+public HashMap<String, Object> getItem(int _index) {
+return _data.get(_index);
+}
+
+@Override
+public long getItemId(int _index) {
+return _index;
+}
+
+@Override
+public View getView(final int _position, View _v, ViewGroup _container) {
+LayoutInflater _inflater = (LayoutInflater) getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+View _view = _v;
+if (_view == null) {
+_view = _inflater.inflate(R.layout.counter_list_item, null);
+}
+
+final LinearLayout linear1 = _view.findViewById(R.id.linear1);
+final LinearLayout linear2 = _view.findViewById(R.id.linear2);
+final LinearLayout linear3 = _view.findViewById(R.id.linear3);
+final TextView name_view = _view.findViewById(R.id.name_view);
+final Switch notification_indicator = _view.findViewById(R.id.notification_indicator);
+final TextView date_view = _view.findViewById(R.id.date_view);
+final ImageView delete_button = _view.findViewById(R.id.delete_button);
+
+*/
 	}
-	
-	@Deprecated
-	public int getDisplayHeightPixels() {
-		return getResources().getDisplayMetrics().heightPixels;
+	public class Listview1Adapter extends BaseAdapter {
+		
+		ArrayList<HashMap<String, Object>> _data;
+		
+		public Listview1Adapter(ArrayList<HashMap<String, Object>> _arr) {
+			_data = _arr;
+		}
+		
+		@Override
+		public int getCount() {
+			return _data.size();
+		}
+		
+		@Override
+		public HashMap<String, Object> getItem(int _index) {
+			return _data.get(_index);
+		}
+		
+		@Override
+		public long getItemId(int _index) {
+			return _index;
+		}
+		
+		@Override
+		public View getView(final int _position, View _v, ViewGroup _container) {
+			LayoutInflater _inflater = (LayoutInflater) getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View _view = _v;
+			_view = _inflater.inflate(R.layout.counter_list_item, null);
+			final LinearLayout linear1 = _view.findViewById(R.id.linear1);
+						final LinearLayout linear2 = _view.findViewById(R.id.linear2);
+						final LinearLayout linear3 = _view.findViewById(R.id.linear3);
+						final TextView name_view = _view.findViewById(R.id.name_view);
+						final Switch notification_indicator = _view.findViewById(R.id.notification_indicator);
+						final TextView date_view = _view.findViewById(R.id.date_view);
+						final ImageView delete_button = _view.findViewById(R.id.delete_button);
+						
+			try {
+				name_view.setText(counters.get((int)_position).get("name").toString());
+				date_view.setText(counters.get((int)_position).get("date_string").toString());
+				notification_indicator.setText(Util.getContext().getResources().getString(R.string.show_notification_label));
+				notification_indicator.setChecked(Boolean.parseBoolean(counters.get(_position).get("has_notification").toString()));
+				delete_button.setOnLongClickListener(new View.OnLongClickListener() {
+					@Override
+					public boolean onLongClick(View _view) {
+						SketchwareUtil.showMessage(getApplicationContext(), "getApplicationContext().getResource().getString(R.string.delete_counter_label);");
+						return true;
+					}
+				});
+				delete_button.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View _view) {
+						String id = counters.get(_position).get("id").toString();
+						MainActivity.notifyCounterRemoved(CounterManager.getInstance().getCounterOfId(id));
+						CounterManager.getInstance().deleteCounter(id);
+						Util.refreshWidgets();
+						_refresh();
+					}
+				});
+				notification_indicator.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+					@Override
+					public void onCheckedChanged(CompoundButton cb, boolean isChecked) {
+						String id = counters.get(_position).get("id").toString();
+						if (isChecked) {
+							CounterManager.getInstance().addNotification(id);
+						}
+						else {
+							CounterManager.getInstance().removeNotification(id);
+						}
+						MainActivity.notifyCounterNotificationStateChanged(CounterManager.getInstance().getCounterOfId(id));
+						_refresh();
+						notification_indicator.setChecked(Boolean.parseBoolean(counters.get(_position).get("has_notification").toString()));
+					}});
+			} catch (Exception e) { Util.log(e.getMessage());}
+			
+			return _view;
+		}
 	}
 }

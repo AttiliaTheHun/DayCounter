@@ -21,9 +21,9 @@ import attilathehun.daycounter.Counter;
 import attilathehun.daycounter.CounterManager;
 
 /**
- * This is the widget configuration activity, that gets open when you create a widget.
+ * This is the light widget configuration activity, that gets open when you create a light widget.
  */
-public class WidgetActivity extends Activity {
+public class WidgetLightActivity extends Activity {
 
     /**
      * When the activity is instantiated. It creates a dialog listing all the counters for the user to select the source data counter for the widget.
@@ -46,15 +46,15 @@ public class WidgetActivity extends Activity {
             mAppWidgetId = -1;
         }
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(WidgetActivity.this);
-        final RadioGroup rgroup = new RadioGroup(WidgetActivity.this);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(WidgetLightActivity.this);
+        final RadioGroup rgroup = new RadioGroup(WidgetLightActivity.this);
         ArrayList<Counter> counters = CounterManager.getInstance().getCounters();
         View inflate = getLayoutInflater().inflate(R.layout.about_dialog, null);
         for (int i = 0; i < counters.size(); i++) {
             if (i == 0) {
                 // rgroup.check(Integer.parseInt(counters.get(i).getId()));
             }
-            final RadioButton rb = new RadioButton(WidgetActivity.this);
+            final RadioButton rb = new RadioButton(WidgetLightActivity.this);
             final LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
             rb.setText(counters.get(i).getName() + " (" + counters.get(i).getDateString() + ")");
             rb.setId(Integer.parseInt(counters.get(i).getId()));
@@ -72,9 +72,9 @@ public class WidgetActivity extends Activity {
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(Util.getContext());
                 //Update the App Widget with a RemoteViews layout by calling updateAppWidget(int, RemoteViews):
                 RemoteViews views = new RemoteViews(Util.getContext().getPackageName(),
-                        R.layout.widget);
+                        R.layout.widget_light);
                 appWidgetManager.updateAppWidget(mAppWidgetId, views);
-                WidgetProvider.refresh();
+                WidgetLightProvider.refresh();
                 //Finally, create the return Intent, set it with the Activity result, and finish the Activity:
                 Intent resultValue = new Intent();
                 resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
@@ -90,7 +90,9 @@ public class WidgetActivity extends Activity {
             }
         });
 
+
         builder.create().show();
+
 
     }
 

@@ -1,6 +1,7 @@
 package attilathehun.daycounter;
 
-import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.*;
 import android.app.*;
 import android.os.*;
 import android.view.*;
@@ -27,31 +28,34 @@ import java.util.ArrayList;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.Intent;
 import android.net.Uri;
-import android.view.View;
 import android.text.Editable;
 import android.text.TextWatcher;
-import androidx.core.*;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.DialogFragment;
+import android.view.View;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.DialogFragment;
 
-public class CreateCounterActivity extends Activity {
+public class CreateCounterActivity extends AppCompatActivity {
 	
 	private ArrayList<String> months = new ArrayList<>();
 	private ArrayList<String> days = new ArrayList<>();
 	
 	private LinearLayout linear1;
-	private TextView textview1;
+	private TextView counter_name_label;
+	private LinearLayout linear4;
+	private TextView birth_date_label;
 	private LinearLayout linear2;
-	private TextView textview2;
+	private TextView highest_estimated_age_label;
 	private LinearLayout linear3;
 	private Button create_button;
+	private EditText name_box;
 	private Spinner day_selector;
 	private Spinner month_selector;
 	private EditText enter_year;
@@ -70,24 +74,19 @@ public class CreateCounterActivity extends Activity {
 	
 	private void initialize(Bundle _savedInstanceState) {
 		linear1 = findViewById(R.id.linear1);
-		textview1 = findViewById(R.id.textview1);
+		counter_name_label = findViewById(R.id.counter_name_label);
+		linear4 = findViewById(R.id.linear4);
+		birth_date_label = findViewById(R.id.birth_date_label);
 		linear2 = findViewById(R.id.linear2);
-		textview2 = findViewById(R.id.textview2);
+		highest_estimated_age_label = findViewById(R.id.highest_estimated_age_label);
 		linear3 = findViewById(R.id.linear3);
 		create_button = findViewById(R.id.create_button);
+		name_box = findViewById(R.id.name_box);
 		day_selector = findViewById(R.id.day_selector);
 		month_selector = findViewById(R.id.month_selector);
 		enter_year = findViewById(R.id.enter_year);
 		enter_target_age = findViewById(R.id.enter_target_age);
 		file = getSharedPreferences("data", Activity.MODE_PRIVATE);
-		
-		create_button.setOnLongClickListener(new View.OnLongClickListener() {
-			@Override
-			public boolean onLongClick(View _view) {
-				SketchwareUtil.showMessage(getApplicationContext(), "Hmm?");
-				return true;
-			}
-		});
 		
 		create_button.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -101,15 +100,21 @@ public class CreateCounterActivity extends Activity {
 					}
 					else {
 						SketchwareUtil.hideKeyboard(getApplicationContext());
-						file.edit().putString("counterExists", "true").commit();
-						file.edit().putInt("targetDay", day_selector.getSelectedItemPosition()).commit();
-						file.edit().putInt("targetMonth", month_selector.getSelectedItemPosition()).commit();
-						file.edit().putInt("targetYear", Integer.parseInt(enter_year.getText().toString()) + Integer.parseInt(enter_target_age.getText().toString())).commit();
-						file.edit().putInt("targetAge", Integer.parseInt(enter_target_age.getText().toString())).commit();
-						Counter.refresh();
-						intent.setClass(getApplicationContext(), MainActivity.class);
-						startActivity(intent);
-						finish();
+						String name = name_box.getText().toString();
+						int targetDay =  day_selector.getSelectedItemPosition();
+						int targetMonth = month_selector.getSelectedItemPosition();
+						int targetAge = Integer.parseInt(enter_target_age.getText().toString());
+							int targetYear = Integer.parseInt(enter_year.getText().toString()) + targetAge;
+						boolean success = CounterManager.getInstance().addCounter(name, targetDay, targetMonth, targetYear, targetAge);
+						if (success) {
+							Util.startServiceIfNotRunning();
+							intent.setClass(getApplicationContext(), MainActivity.class);
+							startActivity(intent);
+							finish();
+						} else {
+							SketchwareUtil.showMessage(getApplicationContext(), "Invalid input");
+							
+						}
 					}
 				}
 			}
@@ -158,79 +163,41 @@ public class CreateCounterActivity extends Activity {
 	
 	private void initializeLogic() {
 		_initLists();
+		_initTranslation();
 		month_selector.setAdapter(new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_spinner_dropdown_item, months));
+		((ArrayAdapter)month_selector.getAdapter()).notifyDataSetChanged();
 		day_selector.setAdapter(new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_spinner_dropdown_item, days));
 		((ArrayAdapter)day_selector.getAdapter()).notifyDataSetChanged();
-		((ArrayAdapter)month_selector.getAdapter()).notifyDataSetChanged();
 	}
 	
 	public void _initLists() {
 		for(int i = 1; i <= 31; i++){
 			  days.add(Integer.toString(i));
 		}
-		months.add("January");
-		months.add("February");
-		months.add("March");
-		months.add("April");
-		months.add("May");
-		months.add("June");
-		months.add("July");
-		months.add("August");
-		months.add("September");
-		months.add("October");
-		months.add("November");
-		months.add("December");
+		months.add(Util.getContext().getResources().getString(R.string.january));
+				months.add(Util.getContext().getResources().getString(R.string.february));
+				months.add(Util.getContext().getResources().getString(R.string.march));
+				months.add(Util.getContext().getResources().getString(R.string.april));
+				months.add(Util.getContext().getResources().getString(R.string.may));
+				months.add(Util.getContext().getResources().getString(R.string.june));
+				months.add(Util.getContext().getResources().getString(R.string.july));
+				months.add(Util.getContext().getResources().getString(R.string.august));
+				months.add(Util.getContext().getResources().getString(R.string.september));
+				months.add(Util.getContext().getResources().getString(R.string.october));
+				months.add(Util.getContext().getResources().getString(R.string.november));
+				months.add(Util.getContext().getResources().getString(R.string.december));
+		
 	}
 	
 	
-	@Deprecated
-	public void showMessage(String _s) {
-		Toast.makeText(getApplicationContext(), _s, Toast.LENGTH_SHORT).show();
+	public void _initTranslation() {
+		counter_name_label.setText(Util.getContext().getResources().getString(R.string.counter_name_label));
+		birth_date_label.setText(Util.getContext().getResources().getString(R.string.birth_date_label));
+		highest_estimated_age_label.setText(Util.getContext().getResources().getString(R.string.highest_estimated_age_label));
+		create_button.setText(Util.getContext().getResources().getString(R.string.create_counter_label));
+		name_box.setHint(Util.getContext().getResources().getString(R.string.counter_name_hint));
+		enter_year.setHint(Util.getContext().getResources().getString(R.string.birth_date_year_label));
+		enter_target_age.setHint(Util.getContext().getResources().getString(R.string.highest_estimated_age_hint));
 	}
 	
-	@Deprecated
-	public int getLocationX(View _v) {
-		int _location[] = new int[2];
-		_v.getLocationInWindow(_location);
-		return _location[0];
-	}
-	
-	@Deprecated
-	public int getLocationY(View _v) {
-		int _location[] = new int[2];
-		_v.getLocationInWindow(_location);
-		return _location[1];
-	}
-	
-	@Deprecated
-	public int getRandom(int _min, int _max) {
-		Random random = new Random();
-		return random.nextInt(_max - _min + 1) + _min;
-	}
-	
-	@Deprecated
-	public ArrayList<Double> getCheckedItemPositionsToArray(ListView _list) {
-		ArrayList<Double> _result = new ArrayList<Double>();
-		SparseBooleanArray _arr = _list.getCheckedItemPositions();
-		for (int _iIdx = 0; _iIdx < _arr.size(); _iIdx++) {
-			if (_arr.valueAt(_iIdx))
-			_result.add((double)_arr.keyAt(_iIdx));
-		}
-		return _result;
-	}
-	
-	@Deprecated
-	public float getDip(int _input) {
-		return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, _input, getResources().getDisplayMetrics());
-	}
-	
-	@Deprecated
-	public int getDisplayWidthPixels() {
-		return getResources().getDisplayMetrics().widthPixels;
-	}
-	
-	@Deprecated
-	public int getDisplayHeightPixels() {
-		return getResources().getDisplayMetrics().heightPixels;
-	}
 }

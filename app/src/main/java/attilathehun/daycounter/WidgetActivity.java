@@ -1,7 +1,7 @@
 package attilathehun.daycounter;
-
+ 
 import java.util.ArrayList;
-
+ 
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -15,16 +15,16 @@ import android.widget.RadioGroup;
 import android.widget.RadioButton;
 import android.widget.RemoteViews;
 import android.os.Bundle;
-
+ 
 import attilathehun.daycounter.Util;
 import attilathehun.daycounter.Counter;
 import attilathehun.daycounter.CounterManager;
-
+ 
 /**
  * This is the widget configuration activity, that gets open when you create a widget.
  */
 public class WidgetActivity extends Activity {
-
+ 
     /**
      * When the activity is instantiated. It creates a dialog listing all the counters for the user to select the source data counter for the widget.
      * @param savedInstanceState yeah
@@ -32,9 +32,9 @@ public class WidgetActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+ 
         Util.setContextIfNull(getApplicationContext());
-
+ 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         final int mAppWidgetId;
@@ -45,7 +45,7 @@ public class WidgetActivity extends Activity {
         } else {
             mAppWidgetId = -1;
         }
-
+ 
         final AlertDialog.Builder builder = new AlertDialog.Builder(WidgetActivity.this);
         final RadioGroup rgroup = new RadioGroup(WidgetActivity.this);
         ArrayList<Counter> counters = CounterManager.getInstance().getCounters();
@@ -60,11 +60,11 @@ public class WidgetActivity extends Activity {
             rb.setId(Integer.parseInt(counters.get(i).getId()));
             rgroup.addView(rb, i, lp);
         }
-
+ 
         builder.setView(rgroup);
         builder.setTitle(Util.getContext().getResources().getString(R.string.counter_dialog_title));
         builder.setCancelable(false);
-
+ 
         builder.setPositiveButton(Util.getContext().getResources().getString(R.string.counter_dialog_positive), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface _dialog, int _which) {
@@ -74,7 +74,7 @@ public class WidgetActivity extends Activity {
                 RemoteViews views = new RemoteViews(Util.getContext().getPackageName(),
                         R.layout.widget);
                 appWidgetManager.updateAppWidget(mAppWidgetId, views);
-                WidgetProvider.refresh();
+                 Util.refreshWidgets();
                 //Finally, create the return Intent, set it with the Activity result, and finish the Activity:
                 Intent resultValue = new Intent();
                 resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
@@ -82,24 +82,24 @@ public class WidgetActivity extends Activity {
                 finish();
             }
         });
-
+ 
         builder.setNegativeButton(Util.getContext().getResources().getString(R.string.counter_dialog_negative), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface _dialog, int _which) {
                 finish();
             }
         });
-
+ 
         builder.create().show();
-
+ 
     }
-
+ 
     @Override
     public void onBackPressed() {
         //don't call super!!!
         do_widget();
     }
-
+ 
     /**
      * Quit the activity.
      */
@@ -113,5 +113,6 @@ public class WidgetActivity extends Activity {
             e.printStackTrace();
         }
     }
-
+ 
 }
+ 

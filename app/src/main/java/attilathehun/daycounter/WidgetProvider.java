@@ -1,21 +1,21 @@
 package attilathehun.daycounter;
-
+ 
 import android.appwidget.AppWidgetProvider;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ComponentName;
 import android.widget.RemoteViews;
-
+ 
 import attilathehun.daycounter.Util;
 import attilathehun.daycounter.Counter;
 import attilathehun.daycounter.CounterManager;
-
+ 
 /**
  * This class manages the behavior of our launcher windget(s).
  */
 public class WidgetProvider extends AppWidgetProvider {
-
+ 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         //Util.log("WidgetProvider.onUpdate()");
@@ -25,24 +25,24 @@ public class WidgetProvider extends AppWidgetProvider {
             updateAppWidget(context, appWidgetManager, appWidgetId);
         }
     }
-
+ 
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
         for (int appWidgetId : appWidgetIds) {
             CounterManager.getInstance().unbindWidgetOfId(appWidgetId);
         }
     }
-
+ 
     @Override
     public void onEnabled(Context context) {
-
+ 
     }
-
+ 
     @Override
     public void onDisabled(Context context) {
-
+ 
     }
-
+ 
     /**
      * Updates the text on the widget's TextView to match the current day count.
      * @param context a context for emergency purposes
@@ -64,10 +64,11 @@ public class WidgetProvider extends AppWidgetProvider {
         // Tell the widget manager
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
-
+ 
     /**
      * Manually refreshes the widgets, for the cases when you delete a counter, its widget should no longer display the data.
-     */efresh() {
+     */
+     public static void refresh() {
         Intent intent = new Intent(Util.getContext(), WidgetProvider.class);
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         // Use an array and EXTRA_APPWIDGET_IDS instead of AppWidgetManager.EXTRA_APPWIDGET_ID,
@@ -75,12 +76,12 @@ public class WidgetProvider extends AppWidgetProvider {
         int[] ids = AppWidgetManager.getInstance(Util.getContext()).getAppWidgetIds(new ComponentName(Util.getContext(), WidgetProvider.class));
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
         Util.getContext().sendBroadcast(intent);
-
+ 
         /* last resort
          int[] ids = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), MyWidget.class));
         MyWidget myWidget = new MyWidget();
         myWidget.onUpdate(this, AppWidgetManager.getInstance(this),ids);
         */
     }
-
+ 
 }

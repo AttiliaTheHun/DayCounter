@@ -1,7 +1,7 @@
 package attilathehun.daycounter;
-
+ 
 import attilathehun.daycounter.Counter;
-
+ 
 /**
  * Provides a communication channel to entities that need to be notified about changes in the Counter industry.
  */
@@ -11,10 +11,11 @@ public interface CounterEventListener {
      * @param counter concerned Counter representation, NOT a reference!
      */
     public void onCounterNotificationStateChanged(Counter counter);
-
+ 
     /**
      * Should be emitted when a Counter is destroyed.
      * @param counter counter concerned Counter representation, NOT a reference!
      */
     public void onCounterRemoved(Counter counter);
 }
+ 

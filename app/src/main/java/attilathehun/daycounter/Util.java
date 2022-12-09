@@ -1,39 +1,39 @@
 package attilathehun.daycounter;
-
+ 
 import java.io.IOException;
 import java.io.File;
 import java.io.FileWriter;
-
+ 
 import android.content.Context;
 import android.content.Intent;
 import androidx.core.content.FileProvider;
-
+ 
 import android.net.Uri;
 import android.app.Activity;
-
+ 
 import android.os.Build;
-
+ 
 import attilathehun.daycounter.FileUtil;
 import attilathehun.daycounter.ServiceLauncher;
 import attilathehun.daycounter.NotificationService;
 import attilathehun.daycounter.WidgetProvider;
 import attilathehun.daycounter.WidgetLightProvider;
-
+ 
 /**
  * A collection of methods that are crucial for other classes yet belong in none of them.
  */
 public class Util {
-
+ 
     public static final boolean DEBUG = true;
     private static Context context = null;
-
+ 
     /**
      * @return stringified path of the log file
      */
     private static String getLogPath() {
         return FileUtil.getExternalStorageDir() + "/DayCounterLog.txt";
     }
-
+ 
     /**
      * Logs a message inside the log file
      */
@@ -42,7 +42,7 @@ public class Util {
             appendFile(getLogPath(), message + "\n");
         }
     }
-
+ 
     /**
      * Empties the log file.
      */
@@ -51,7 +51,7 @@ public class Util {
             FileUtil.writeFile(Util.getLogPath(), "");
         }
     }
-
+ 
     /**
      * Attemps to open the log file in some kind of file viewing app the user has installed,
      * crashes on my friend's phone though.
@@ -72,14 +72,14 @@ public class Util {
             Util.log(e.toString());
         }
     }
-
+ 
     /**
      * A version of Util#viewLog(context) that uses the default context.
      */
     public static void viewLog() {
         Util.viewLog(Util.getContext());
     }
-
+ 
     /**
      * Creates a new file on the specified path.
      * I think I stole this from Sketchware's FileUtil.java.
@@ -91,9 +91,9 @@ public class Util {
             String dirPath = path.substring(0, lastSep);
             FileUtil.makeDir(dirPath);
         }
-
+ 
         File file = new File(path);
-
+ 
         try {
             if (!file.exists())
                 file.createNewFile();
@@ -101,7 +101,7 @@ public class Util {
             e.printStackTrace();
         }
     }
-
+ 
     /**
      * Attaches a String to the file's content.
      * I think I stole this from Sketchware' FileUtil.java.
@@ -111,7 +111,7 @@ public class Util {
     private static void appendFile(String path, String str) {
         createNewFile(path);
         FileWriter fileWriter = null;
-
+ 
         try {
             fileWriter = new FileWriter(new File(path), true);
             fileWriter.write(str);
@@ -127,7 +127,7 @@ public class Util {
             }
         }
     }
-
+ 
     /**
      * Sets the default context, allowing the use of contextless methods.
      * @param context the context object to use as default
@@ -135,7 +135,7 @@ public class Util {
     public static void setContext(Context context) {
         Util.context = context;
     }
-
+ 
     /**
      * A version of Util#setContext(context) to use when expecting to have a default context set.
      */
@@ -144,7 +144,7 @@ public class Util {
             Util.setContext(context);
         }
     }
-
+ 
     /**
      * Returns the default context.
      * @return default context
@@ -152,8 +152,8 @@ public class Util {
     public static Context getContext() {
         return Util.context;
     }
-
-
+ 
+ 
     /**
      * Starts the notification service, if there is any notification to be displayed.
      * @param context a context to use
@@ -163,7 +163,7 @@ public class Util {
             // Util.log("No notification counters found");
             return;
         }
-
+ 
         final Intent intent = new Intent(context, NotificationService.class);
         NotificationService.createNotificationChannel();
         // Start the service in a new thread so it does not block the UI
@@ -173,25 +173,25 @@ public class Util {
                 getContext().startService(intent);
             }
         }).start();
-
+ 
     }
-
+ 
     /**
      * A contextless version of Util#startService(context) which uses the default context
      */
     public static void startService() {
         Util.startService(Util.getContext());
     }
-
+ 
     /**
-     * It is bad enough to have on service, no need for more.
+     * It is bad enough to have one service, no need for more.
      */
     public static void startServiceIfNotRunning() {
         if (!NotificationService.isRunning()) {
             startService();
         }
     }
-
+ 
     /**
      * A wrapper over Counter#getDaysRemaining() that works with translations.
      */
@@ -200,14 +200,14 @@ public class Util {
         String output = getContext().getResources().getString(R.string.days_left);
         return String.format(output, daysLeft);
     }
-
+ 
     /**
      * Delete as soon as the multicounter version is built.
      */
     public static String getDaysRemaining() {
         return getDaysRemaining(CounterManager.getInstance().getCounters().get(0));
     }
-
+ 
     /*
      * We will want this, soon.
      * @param activity any activity
@@ -223,11 +223,11 @@ public class Util {
         config.setLocale(locale);
         resources.updateConfiguration(config, resources.getDisplayMetrics());
     }*/
-
+ 
     public static int random(int min, int max) {
         return (int) Math.floor((Math.random()) * (max - min + 1) + min);
     }
-
+ 
     /**
      * The same way notifications need to be refreshed, this method refreshes the homescreen widgets.
      */
@@ -235,5 +235,5 @@ public class Util {
         WidgetProvider.refresh();
         WidgetLightProvider.refresh();
     }
-
+ 
 }

@@ -16,6 +16,7 @@
           └ 🗎DateChangedListener.java
           └ 🗎ServiceLauncher.java
           └ 🗎Util.java
+          └ 🗎UriUtils.java
           └ 🗎WidgetActivity.java
           └ 🗎WidgetProvider.java
           └ 🗎WidgetLightActivity.java

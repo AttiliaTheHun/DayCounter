@@ -28,8 +28,8 @@ import java.util.*;
 import java.util.regex.*;
 import java.text.*;
 import org.json.*;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.ArrayList;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ArrayAdapter;
@@ -38,9 +38,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.widget.AdapterView;
 import android.view.View;
 import com.google.gson.Gson;
+import androidx.core.*;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.DialogFragment;
@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
 	private FloatingActionButton _fab;
 	private String useless = "";
 	private  static List<CounterEventListener> listeners = new ArrayList<CounterEventListener>();
+	private HashMap<String, Object> dhdh = new HashMap<>();
 	
 	private ArrayList<HashMap<String, Object>> counters = new ArrayList<>();
 	
@@ -91,23 +92,6 @@ public class MainActivity extends AppCompatActivity {
 		linear2 = findViewById(R.id.linear2);
 		listview1 = findViewById(R.id.listview1);
 		d = new AlertDialog.Builder(this);
-		
-		listview1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> _param1, View _param2, int _param3, long _param4) {
-				final int _position = _param3;
-				
-			}
-		});
-		
-		listview1.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-			@Override
-			public boolean onItemLongClick(AdapterView<?> _param1, View _param2, int _param3, long _param4) {
-				final int _position = _param3;
-				
-				return true;
-			}
-		});
 		
 		_fab.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -169,11 +153,11 @@ public class MainActivity extends AppCompatActivity {
 		return super.onOptionsItemSelected(item);
 	}
 	public void _init() {
+		// Force Sketchware to include the Gson library
+		useless = new Gson().toJson(counters);
 		Util.setContext(getApplicationContext());
 		Util.startServiceIfNotRunning();
 		_refresh();
-		useless = new Gson().toJson(counters);
-		//Util.log(useless);
 	}
 	public static void addListener(CounterEventListener listener) {
 		MainActivity.listeners.add(listener);
@@ -283,7 +267,7 @@ final ImageView delete_button = _view.findViewById(R.id.delete_button);
 				delete_button.setOnLongClickListener(new View.OnLongClickListener() {
 					@Override
 					public boolean onLongClick(View _view) {
-						SketchwareUtil.showMessage(getApplicationContext(), "getApplicationContext().getResource().getString(R.string.delete_counter_label);");
+						SketchwareUtil.showMessage(getApplicationContext(), getApplicationContext().getResources().getString(R.string.delete_counter_label));
 						return true;
 					}
 				});

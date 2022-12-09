@@ -38,6 +38,7 @@ import android.net.Uri;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import androidx.core.*;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.DialogFragment;
@@ -92,11 +93,11 @@ public class CreateCounterActivity extends AppCompatActivity {
 			@Override
 			public void onClick(View _view) {
 				if (enter_year.getText().toString().equals("")) {
-					SketchwareUtil.showMessage(getApplicationContext(), "Fill out all the fileds please");
+					SketchwareUtil.showMessage(getApplicationContext(), Util.getContext().getResources().getString(R.string.fill_all_fields));
 				}
 				else {
 					if (enter_target_age.getText().toString().equals("")) {
-						SketchwareUtil.showMessage(getApplicationContext(), "Fill out all the fileds please");
+						SketchwareUtil.showMessage(getApplicationContext(), Util.getContext().getResources().getString(R.string.fill_all_fields));
 					}
 					else {
 						SketchwareUtil.hideKeyboard(getApplicationContext());
@@ -112,7 +113,7 @@ public class CreateCounterActivity extends AppCompatActivity {
 							startActivity(intent);
 							finish();
 						} else {
-							SketchwareUtil.showMessage(getApplicationContext(), "Invalid input");
+							SketchwareUtil.showMessage(getApplicationContext(), Util.getContext().getResources().getString(R.string.invalid_input));
 							
 						}
 					}
@@ -170,6 +171,12 @@ public class CreateCounterActivity extends AppCompatActivity {
 		((ArrayAdapter)day_selector.getAdapter()).notifyDataSetChanged();
 	}
 	
+	@Override
+	public void onBackPressed() {
+		intent.setClass(getApplicationContext(), MainActivity.class);
+		startActivity(intent);
+		finish();
+	}
 	public void _initLists() {
 		for(int i = 1; i <= 31; i++){
 			  days.add(Integer.toString(i));

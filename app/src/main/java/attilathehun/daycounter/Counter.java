@@ -11,446 +11,403 @@ import android.content.Context;
 import attilathehun.daycounter.Util;
 
 /**
-
-* This class is responsible for the actual counting process.
-
-*/
+ * This class is responsible for the actual counting process.
+ */
 
 public class Counter implements Serializable {
 
-private static final int[] DAYS_IN_MONTHS = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    private static final int[] DAYS_IN_MONTHS = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
-private static final int FEBRUARY = 1;
+    private static final int FEBRUARY = 1;
 
-private static final int DAYS_IN_YEAR = 365;
+    private static final int DAYS_IN_YEAR = 365;
 
-private static Calendar calendar = Calendar.getInstance();
+    private static Calendar calendar = Calendar.getInstance();
 
-private int targetDay = 0, targetMonth = 0, targetYear = 0, targetAge = 0;
+    private int targetDay = 0, targetMonth = 0, targetYear = 0, targetAge = 0;
 
-private String id;
+    private String id;
 
-private String name = "N/A";
+    private String name = "N/A";
 
-private boolean hasNotification = false;
+    private boolean hasNotification = false;
 
-private int widgetId = -1; //No bound widget by default
+    private int widgetId = -1; //No bound widget by default
 
-/**
+    /**
+     * Prefered Counter constructor.
+     *
+     * @param id          id of the Counter
+     * @param name        display name of the Counter
+     * @param targetDay   Counter target day
+     * @param targetMonth Counter target month
+     * @param targetYear  Counter target year
+     * @param targetAge   Counter target age
+     */
 
-* Prefered Counter constructor.
+    private Counter(String id, String name, int targetDay, int targetMonth, int targetYear, int targetAge) {
 
-* @param id id of the Counter
+        this.id = id;
 
-* @param name display name of the Counter
+        this.name = name;
 
-* @param targetDay Counter target day
+        this.targetDay = targetDay;
 
-* @param targetMonth Counter target month
+        this.targetMonth = targetMonth;
 
-* @param targetYear Counter target year
+        this.targetYear = targetYear;
 
-* @param targetAge Counter target age
+        this.targetAge = targetAge;
 
-*/
+    }
 
-private Counter(String id, String name, int targetDay, int targetMonth, int targetYear, int targetAge) {
+    /**
+     * Nameless Counter constructor, such Counters are displaying the default name.
+     *
+     * @param id          id of the Counter
+     * @param name        display name of the Counter
+     * @param targetDay   Counter target day
+     * @param targetMonth Counter target month
+     * @param targetYear  Counter target year
+     * @param targetAge   Counter target age
+     */
 
-this.id = id;
+    private Counter(String id, int targetDay, int targetMonth, int targetYear, int targetAge) {
 
-this.name = name;
+        this.id = id;
 
-this.targetDay = targetDay;
+        this.targetDay = targetDay;
 
-this.targetMonth = targetMonth;
+        this.targetMonth = targetMonth;
 
-this.targetYear = targetYear;
+        this.targetYear = targetYear;
 
-this.targetAge = targetAge;
+        this.targetAge = targetAge;
 
-}
+    }
 
-/**
+    /**
+     * A propertyless Counter could cause severe crashes, thus we forbid it. Do not use!
+     */
 
-* Nameless Counter constructor, such Counters are displaying the default name.
+    private Counter() {
 
-* @param id id of the Counter
+    }
 
-* @param name display name of the Counter
+    /**
+     * Official way of getting Counter instances, that deals with nameless Counters and performs parameter-checking.
+     *
+     * @param id          id of the Counter
+     * @param name        display name of the Counter
+     * @param targetDay   Counter target day
+     * @param targetMonth Counter target month
+     * @param targetYear  Counter target year
+     * @param targetAge   Counter target age
+     * @return A safe-to-use Counter object, null if the parameters are invalid.
+     */
 
-* @param targetDay Counter target day
+    public static Counter create(String id, String name, int targetDay, int targetMonth, int targetYear, int targetAge) {
 
-* @param targetMonth Counter target month
+        if (id == null || targetDay < 0 || targetMonth < 0 || targetYear < 0 || targetAge < 0) {
 
-* @param targetYear Counter target year
+            return null;
 
-* @param targetAge Counter target age
+        }
 
-*/
+        if (name.equals("")) {
 
-private Counter(String id, int targetDay, int targetMonth, int targetYear, int targetAge) {
+            return new Counter(id, targetDay, targetMonth, targetYear, targetAge);
 
-this.id = id;
+        }
 
-this.targetDay = targetDay;
+        return new Counter(id, name, targetDay, targetMonth, targetYear, targetAge);
 
-this.targetMonth = targetMonth;
+    }
 
-this.targetYear = targetYear;
+    /**
+     * Returns the number of days remaining until the date of this particular counter. It is advised to use the Util#getDaysRemaining() wrapper, which supports translation.
+     * <p>
+     * Note that the number may be negative.
+     *
+     * @return number of the remaining days of the Counter
+     */
 
-this.targetAge = targetAge;
+    public int getDaysRemaining() {
 
-}
+        int daysRemaining = 0;
 
-/**
+        final int currentDayOfYear = getCurrentDayOfYear();
 
-* A propertyless Counter could cause severe crashes, thus we forbid it. Do not use!
+        final int targetDayOfYear = calculateTargetDayOfYear();
 
-*/
+        final int dayDifference = currentDayOfYear - targetDayOfYear;
 
-private Counter() {
+        int yearsRemaining = targetYear - getCurrentYear();
 
-}
+        if (dayDifference > 0) {
 
-/**
+            daysRemaining = DAYS_IN_YEAR - currentDayOfYear + targetDayOfYear;
 
-	 * Official way of getting Counter instances, that deals with nameless Counters and performs parameter-checking.
+            yearsRemaining -= 1;
 
-	 * @param id id of the Counter
+        } else {
 
-	 * @param name display name of the Counter
+            daysRemaining = targetDayOfYear - currentDayOfYear;
 
-	 * @param targetDay Counter target day
+        }
 
-	 * @param targetMonth Counter target month
+        daysRemaining += getDaysInYears(yearsRemaining);
 
-	 * @param targetYear Counter target year
-
-	 * @param targetAge Counter target age
-
-* @return A safe-to-use Counter object, null if the parameters are invalid.
-
-*/
-
-public static Counter create(String id, String name, int targetDay, int targetMonth, int targetYear, int targetAge) {
-
-if (id == null || targetDay < 0 || targetMonth < 0 || targetYear < 0 || targetAge < 0) {
-
-return null;
-
-}
-
-if (name.equals("")) {
-
-return new Counter(id, targetDay, targetMonth, targetYear, targetAge);
-
-}
-
-return new Counter(id, name, targetDay, targetMonth, targetYear, targetAge);
-
-}
-
-/**
-
-* Returns the number of days remaining until the date of this particular counter. It is advised to use the Util#getDaysRemaining() wrapper, which supports translation..
-
-* Note that the number may be negative.
-
-* @return number of the remaining days of the Counter
-
-*/
-
-public int getDaysRemaining() {
-
-int daysRemaining = 0;
-
-final int currentDayOfYear = getCurrentDayOfYear();
-
-final int targetDayOfYear = calculateTargetDayOfYear();
-
-final int dayDifference = currentDayOfYear - targetDayOfYear;
-
-int yearsRemaining = targetYear - getCurrentYear();
-
-if (dayDifference > 0) {
-
-daysRemaining = DAYS_IN_YEAR - currentDayOfYear + targetDayOfYear;
-
-yearsRemaining -= 1;
-
-} else {
-
-daysRemaining = targetDayOfYear - currentDayOfYear;
-
-}
-
-daysRemaining += getDaysInYears(yearsRemaining);
-
-daysRemaining += getLeapYears();
+        daysRemaining += getLeapYears();
 
 //for some reason I don't mean to bother with it gives out a count decreased by 1
 
-return daysRemaining + 1;
+        return daysRemaining + 1;
 
-}
+    }
 
-	/**
+    /**
+     * Calculates the number of leap years between current date and target date of the Counter, because for every leap year we need to add a day to the total day count.
+     *
+     * @return number of leap years in the Counter's range
+     */
 
-	 * Calculates the number of leap years between current date and target date of the Counter, because for every leap year we need to add a day to the total day count.
+    private int getLeapYears() {
 
-	 * @return number of leap years in the Counter's range
+        int leapYears = 0;
 
-	 */
+        int firstLeapYear = -1;
 
-private int getLeapYears() {
+        final int currentYear = calendar.get(Calendar.YEAR);
 
-int leapYears = 0;
+        boolean lowerInclusive = false, upperInclusive = false;
 
-int firstLeapYear = -1;
+        // If current year is leap but it is past february, the extra day is not in the Counter's range, because the range starts afterwards.
 
-final int currentYear = calendar.get(Calendar.YEAR);
+        if (Year.isLeap(currentYear) && calendar.get(Calendar.MONTH) > FEBRUARY) {
 
-boolean lowerInclusive = false, upperInclusive = false;
+            lowerInclusive = true;
 
-		// If current year is leap but it is past february, the extra day is not in the Counter's range, because the range starts afterwards.
-
-if (Year.isLeap(currentYear) && calendar.get(Calendar.MONTH) > FEBRUARY) {
-
-lowerInclusive = true;
-
-}
+        }
 
 // If the target year is leap but target month is not later than february, the range of the Counter ends before it reaches the extra day for it is the last day of february.
 
-if (Year.isLeap(targetYear) && targetMonth > FEBRUARY) {
+        if (Year.isLeap(targetYear) && targetMonth > FEBRUARY) {
 
-upperInclusive = true;
+            upperInclusive = true;
 
-}
+        }
 
 // Leap year is every fourth year, so we need to find the first leap year in the interval so we can work with it later.
 
-for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) {
 
-if (Year.isLeap(currentYear + i)) {
+            if (Year.isLeap(currentYear + i)) {
 
-firstLeapYear = currentYear + i;
+                firstLeapYear = currentYear + i;
 
-break;
+                break;
 
-}
+            }
 
-}
+        }
 
-// If there is no leap year in the interval, return 0.
+		// If there is no leap year in the interval, return 0.
 
-if (firstLeapYear == -1) {
+        if (firstLeapYear == -1) {
 
-return 0;
+            return 0;
 
-}
+        }
 
-int firstYear = firstLeapYear, lastYear = targetYear;
+        int firstYear = firstLeapYear, lastYear = targetYear;
 
-// If current year is leap but it is past the extra day, we skip to the next leap year in the range.
+		// If current year is leap but it is past the extra day, we skip to the next leap year in the range.
 
-if (firstYear == currentYear && !lowerInclusive) {
+        if (firstYear == currentYear && !lowerInclusive) {
 
-firstYear += 4;
+            firstYear += 4;
 
-}
+        }
 
-// If target year is leap but the extra day is not within the range, we must not count this year.
+		// If target year is leap but the extra day is not within the range, we must not count this year.
 
-if (lastYear == targetYear && !upperInclusive) {
+        if (lastYear == targetYear && !upperInclusive) {
 
-lastYear -= 1;
+            lastYear -= 1;
 
-}
+        }
 
-// Now every fourth year in the interval between the first leap year of the range and the target year is leap.
+		// Now every fourth year in the interval between the first leap year of the range and the target year is leap.
 
-leapYears = Math.abs(lastYear - firstYear) / 4;
+        leapYears = Math.abs(lastYear - firstYear) / 4;
 
-// However it is not every fourth, it is rather the first, the fifth, the ninth ... . Thus there might be a leap year that is not followed by three ordinary years
+		// However it is not every fourth, it is rather the first, the fifth, the ninth ... . Thus there might be a leap year that is not followed by three ordinary years
 
-// and so the formula above ommited it. We check if there is a quadruplet began at the end of the interval.
+		// and so the formula above ommited it. We check if there is a quadruplet began at the end of the interval.
 
-if (Math.abs(lastYear - firstYear) % 4 > 0) {
+        if (Math.abs(lastYear - firstYear) % 4 > 0) {
 
-leapYears++;
+            leapYears++;
 
-}
+        }
 
-return (leapYears > 0) ? leapYears : 0;
+        return (leapYears > 0) ? leapYears : 0;
 
-}
+    }
 
-/**
+    /**
+     * Returns the total number of days in the given number of years. Note that this method works with the fixed number of days of 365 so you need to user #getLeapYears()
+     * <p>
+     * to fill in the count.
+     *
+     * @param int number of the years
+     * @return number of the days
+     */
 
-* Returns the total number of days in the given number of years. Note that this method works with the fixed number of days of 365 so you need to user #getLeapYears()
+    private static int getDaysInYears(int years) {
 
-* to fill in the count.
+        return years * DAYS_IN_YEAR;
 
-* @param int number of the years
+    }
 
-* @return number of the days
+    /**
+     * Wrapper for Calendar#get() for specific field.
+     *
+     * @return current year as integer
+     */
 
-*/
+    private static int getCurrentYear() {
 
-private static int getDaysInYears(int years) {
+        return calendar.get(Calendar.YEAR);
 
-return years * DAYS_IN_YEAR;
+    }
 
-}
+    /**
+     * Wrapper for Calendar#get() for specific field.
+     *
+     * @return position of the current day in the year
+     */
 
-/**
-
-* Wrapper for Calendar#get() for specific field.
-
-* @return current year as integer
-
-*/
-
-private static int getCurrentYear() {
-
-return calendar.get(Calendar.YEAR);
-
-}
-
-/**
-
-* Wrapper for Calendar#get() for specific field.
-
-* @return position of the current day in the year
-
-*/
-
-private static int getCurrentDayOfYear() {
+    private static int getCurrentDayOfYear() {
 
 // This gets dealt with in #getLeapYears()
 
-if (Year.isLeap(calendar.get(Calendar.YEAR)) && calendar.get(Calendar.MONTH) > FEBRUARY) {
+        if (Year.isLeap(calendar.get(Calendar.YEAR)) && calendar.get(Calendar.MONTH) > FEBRUARY) {
 
-return calendar.get(Calendar.DAY_OF_YEAR) - 1;
+            return calendar.get(Calendar.DAY_OF_YEAR) - 1;
 
-}
+        }
 
-return calendar.get(Calendar.DAY_OF_YEAR);
+        return calendar.get(Calendar.DAY_OF_YEAR);
 
-}
+    }
 
-/**
+    /**
+     * As Counter#getCurrentDayOfYear() returns position of the current day within the current year, this calculates the position of the target day in the target year.
+     *
+     * @return position of targetDay in the year
+     */
 
-* As Counter#getCurrentDayOfYear() returns position of the current day within the current year, this calculates the position of the target day in the target year.
+    private int calculateTargetDayOfYear() {
 
-* @return position of targetDay in the year
+        int dayNumber = targetDay;
 
-*/
+        for (int monthNumber = 0; monthNumber < targetMonth; monthNumber++) {
 
-private int calculateTargetDayOfYear() {
+            dayNumber += DAYS_IN_MONTHS[monthNumber];
 
-int dayNumber = targetDay;
-
-for (int monthNumber = 0; monthNumber < targetMonth; monthNumber++) {
-
-dayNumber += DAYS_IN_MONTHS[monthNumber];
-
-}
+        }
 
 // Check for target year being a leap year and add the extra day eventually
 
-if(Year.isLeap(targetYear) && targetMonth > FEBRUARY){
+        if (Year.isLeap(targetYear) && targetMonth > FEBRUARY) {
 
-dayNumber++;
+            dayNumber++;
 
-}
+        }
 
-return dayNumber;
+        return dayNumber;
 
-}
+    }
 
-/**
+    /**
+     * The Calendar instance is static and works with the date it was created at. This method renews the instance to use the current date.
+     */
 
-* The Calendar instance is static and works with the date it was created at. This method renews the instance to use the current date.
+    public static void refresh() {
 
-*/
+        Counter.calendar = Calendar.getInstance();
 
-public static void refresh() {
+    }
 
-Counter.calendar = Calendar.getInstance();
+    /**
+     * Stringifies the data of the Counter in a predefined format.
+     *
+     * @return String of the target date and data of the Counter
+     */
 
-}
+    public String getDateString() {
 
-/**
+        return (targetDay + 1) + "/" + (targetMonth + 1) + "/" + targetYear + " (" + targetAge + ")";
 
-* Stringifies the data of the Counter in a predefined format.
+    }
 
-* @return String of the target date and data of the Counter
+    public String getId() {
 
-*/
+        return id;
 
-public String getDateString() {
+    }
 
-return (targetDay + 1) + "/" + (targetMonth + 1) + "/" + targetYear + " (" + targetAge + ")";
+    public String getName() {
 
-}
+        return name;
 
-public String getId() {
+    }
 
-return id;
+    public void addNotification() {
 
-}
+        this.hasNotification = true;
 
-public String getName() {
+    }
 
-return name;
+    public void removeNotification() {
 
-}
+        this.hasNotification = false;
 
-public void addNotification() {
+    }
 
-this.hasNotification = true;
+    public boolean hasNotification() {
 
-}
+        return this.hasNotification;
 
-public void removeNotification() {
+    }
 
-this.hasNotification = false;
+    public int getWidgetId() {
 
-}
+        return this.widgetId;
 
-public boolean hasNotification() {
+    }
 
-return this.hasNotification;
+    public boolean hasWidget() {
 
-}
+        return this.widgetId != -1;
 
-public int getWidgetId() {
+    }
 
-return this.widgetId;
+    public void bindWidget(int widgetId) {
 
-}
+        Util.log("LigmaID: " + widgetId);
 
-public boolean hasWidget() {
+        this.widgetId = widgetId;
 
-return this.widgetId != -1;
+    }
 
-}
+    public void unbindWidget() {
 
-public void bindWidget(int widgetId) {
+        this.widgetId = -1;
 
-Util.log("LigmaID: " + widgetId);
-
-this.widgetId = widgetId;
-
-}
-
-public void unbindWidget() {
-
-this.widgetId = -1;
-
-}
+    }
 
 }
 

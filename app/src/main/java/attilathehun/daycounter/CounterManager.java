@@ -304,7 +304,12 @@ public class CounterManager {
         }
         return null;
     }
-    
+
+    /**
+     * Exports the save file into the given path.
+     * @param path  path of the export file
+     * @return true if success
+     */
     public boolean exportBytes(String path) {
         try {
             File dataFile = new File(getFilePath());
@@ -325,11 +330,20 @@ public class CounterManager {
         }
         
     }
-    
+
+    /**
+     * Exports the save file into the root of the external storage.
+     * @return true if success
+     */
     public boolean exportBytesDefault() {
         return exportBytes(DEFAULT_PATH);
     }
-    
+
+    /**
+     * Exports the counters as a JSON file.
+     * @param path path of the export file
+     * @return true if success
+     */
     public boolean exportJSON(String path) {
         try {
             final String jsonData = new Gson().toJson(counters);          
@@ -348,11 +362,20 @@ public class CounterManager {
         //useless = new Gson().toJson(dhdh);
 //counters = new Gson().fromJson(useless, new TypeToken<ArrayList<HashMap<String, Object>>>(){}.getType());
     }
-    
+
+    /**
+     * Exports the counters as a JSON file to the root of the external storage.
+     * @return true if success
+     */
     public boolean exportJSONDefault() {
         return exportJSON(DEFAULT_PATH + ".json");
     }
-    
+
+    /**
+     * Imports the counters from a file in their serialized form.
+     * @param path import file path
+     * @return true if success
+     */
     public boolean importBytes(String path) {
         try {
             File file = new File(path);
@@ -374,7 +397,12 @@ public class CounterManager {
             return false;
         }
     }
-    
+
+    /**
+     * Import the counters from a JSON file.
+     * @param path import file path
+     * @return true if success
+     */
     public boolean importJSON(String path) {
         try {
             File importFile = new File(path);

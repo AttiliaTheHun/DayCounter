@@ -1,13 +1,15 @@
 # DayCounter
 A simple Android app counting remaining days until a given date. It was origianlly meant to give you a precise idea of how many days you have left until you reach a certain age (eg. 60 years), but you can use it for any sort of day counting.<br>
 <br>
-I have been told that the code is a mess and it is hard to understand how does it work (the fact that I already forgot underlines that I guess), so I decided to make a small docs [here](https://github.com/AttiliaTheHun/DayCounter/blob/master/BRIEF_DOCUMENTATION.md).
+I have been told that the code is a mess and it is hard to understand how it works (the fact that I already forgot it underlines that I guess), so I decided to make a small docs [here](https://github.com/AttiliaTheHun/DayCounter/blob/master/BRIEF_DOCUMENTATION.md).
 ## Features
-- Notification service displaying the amount of remaining days
-- Homescreen widget displaying the amount of remaining days
+- Unlimited number of counters (RAM is the limit)
+- Notification service displaying the amount of remaining days for any counter you choose
+- Homescreen widgets displaying the amount of remaining days for any counter you choose
 - Starts on boot
+- Supports complete translations (except for some error displaying and logging), currently available for 🇨🇿Czech and partially 🇫🇷French.
 ### Notes
-- The app is tested to work on Android 10 when the user uses the app as intended, there may be bugs and undesired features which I will appreacite in Issues (and won't ever fix)
+- The app is tested to work on Android 10 when the user uses the app as intended, there may be bugs and undesired features which I will appreciate in Issues (and won't ever fix)
 - The UI sucks
 ## Items For Mental Consultation
 - Yes, I made the app in [Sketchware Pro](https://github.com/Sketchware-Pro/Sketchware-Pro) (on PHONE)

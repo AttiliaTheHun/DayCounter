@@ -32,7 +32,7 @@ Returns a list of counters with positive notification status.
 ### public ArrayList<Counter> getWidgetCounters()
 Returns a list of counters that are bound to a widget.
 ## MainActivity.java, CreateCounterActivity.java, SettingsActivity.java
-*extends AppCompatActivity Serializable*<br><br>
+*extends AppCompatActivity*<br><br>
 Android activities running the screens we see when using the app. See 
 [MainActivity.java](https://github.com/AttiliaTheHun/DayCounter/blob/master/app/src/main/java/attilathehun/daycounter/MainActivity.java), 
 [CreateCounterActivity.java](https://github.com/AttiliaTheHun/DayCounter/blob/master/app/src/main/java/attilathehun/daycounter/CreateCounterActivity.java), 

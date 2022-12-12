@@ -1,4 +1,4 @@
-The original single-counter version (1.2) is still available in [this branch](https://github.com/AttiliaTheHun/DayCounter/tree/version-1.1) and in [this release](https://github.com/AttiliaTheHun/DayCounter/releases/tag/v1.1.0).<br>
+The original single-counter version (1.1) is still available in [this branch](https://github.com/AttiliaTheHun/DayCounter/tree/version-1.1) and in [this release](https://github.com/AttiliaTheHun/DayCounter/releases/tag/v1.1.0).<br>
 # DayCounter
 A simple Android app counting remaining days until a given date. It was origianlly meant to give you a precise idea of how many days you have left until you reach a certain age (eg. 60 years), but you can use it for any sort of day counting.<br>
 <br>

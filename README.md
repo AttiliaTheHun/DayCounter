@@ -2,7 +2,7 @@ This is the original version (1.1), the initial, the only one that was meant to 
 # DayCounter
 A simple Android app counting remaining days until a given date. It was origianlly meant to give you a precise idea of how many days you have left until you reach a certain age (eg. 60 years), but you can use it for any sort of day counting.<br>
 <br>
-I have been told that the code is a mess and it is hard to understand how does it work (the fact that I already forgot underlines that I guess), so I decided to make a small docs [here](https://github.com/AttiliaTheHun/DayCounter/blob/master/BRIEF_DOCUMENTATION.md).
+I have been told that the code is a mess and it is hard to understand how does it work (the fact that I already forgot underlines that I guess), so I decided to make a small docs [here](https://github.com/AttiliaTheHun/DayCounter/blob/version-1.1/BRIEF_DOCUMENTATION.md).
 ## Features
 - Notification service displaying the amount of remaining days
 - Homescreen widget displaying the amount of remaining days

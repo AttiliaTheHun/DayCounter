@@ -1,3 +1,4 @@
+The original single-counter version (1.2) is still available in [this branch](https://github.com/AttiliaTheHun/DayCounter/tree/version-1.1) and in [this release](https://github.com/AttiliaTheHun/DayCounter/releases/tag/v1.1.0).<br>
 # DayCounter
 A simple Android app counting remaining days until a given date. It was origianlly meant to give you a precise idea of how many days you have left until you reach a certain age (eg. 60 years), but you can use it for any sort of day counting.<br>
 <br>
@@ -11,6 +12,10 @@ I have been told that the code is a mess and it is hard to understand how it wor
 ### Notes
 - The app is tested to work on Android 10 when the user uses the app as intended, there may be bugs and undesired features which I will appreciate in Issues (and won't ever fix)
 - The UI sucks
+#### ⚠️ Saved data protection
+The application stores the counters as a serialized data stream. Thus if you change the version of the Counter class (update/downgrade), it will be no longer possible for the application to load the data (the counters).<br><br>
+You can use the export and import functions to overcome this shortcoming by exporting the data in JSON format. Keep in mind that the byte format (the serialized data) can not be imported if the application uses a differnet version of the Counter class.<br><br>
+The JSON import/export option should be always prefered over bytes.
 ## Items For Mental Consultation
 - Yes, I made the app in [Sketchware Pro](https://github.com/Sketchware-Pro/Sketchware-Pro) (on PHONE)
 ## How to build

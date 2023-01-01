@@ -104,9 +104,10 @@ public class MainActivity extends AppCompatActivity {
 	}
 	
 	private void initializeLogic() {
+		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 		_init();
 		
-		if (!CounterManager.getInstance().counterExists()) {
+		if (!CounterManager.getInstance().counterExists() && !(getIntent().getStringExtra("ABORTED") != null && getIntent().getStringExtra("ABORTED").equals("true"))) {
 			intent.setClass(getApplicationContext(), CreateCounterActivity.class);
 			startActivity(intent);
 			finish();
@@ -152,26 +153,24 @@ public class MainActivity extends AppCompatActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		Util.clearContextIfEquals(this);
+	}
+	
+	@Override
+	public void onBackPressed() {
+		Util.clearContextIfEquals(this);
+	}
 	public void _init() {
 		// Force Sketchware to include the Gson library
 		useless = new Gson().toJson(counters);
-		Util.setContext(getApplicationContext());
-		Util.startServiceIfNotRunning();
+		CounterManager.initFilePath(this);
+		Util.setContextIfNull(this);
+		Util.startService(this);
 		_refresh();
-	}
-	public static void addListener(CounterEventListener listener) {
-		MainActivity.listeners.add(listener);
-	}
-	
-	private static void notifyCounterNotificationStateChanged(Counter counter) {
-		for (CounterEventListener listener : MainActivity.listeners) {
-			listener.onCounterNotificationStateChanged(counter);
-		}
-	}
-	private static void notifyCounterRemoved(Counter counter) {
-		for (CounterEventListener listener : MainActivity.listeners) {
-			listener.onCounterRemoved(counter);
-		}
 	}
 	
 	
@@ -262,12 +261,12 @@ final ImageView delete_button = _view.findViewById(R.id.delete_button);
 			try {
 				name_view.setText(counters.get((int)_position).get("name").toString());
 				date_view.setText(counters.get((int)_position).get("date_string").toString());
-				notification_indicator.setText(Util.getContext().getResources().getString(R.string.show_notification_label));
+				notification_indicator.setText(getResources().getString(R.string.show_notification_label));
 				notification_indicator.setChecked(Boolean.parseBoolean(counters.get(_position).get("has_notification").toString()));
 				delete_button.setOnLongClickListener(new View.OnLongClickListener() {
 					@Override
 					public boolean onLongClick(View _view) {
-						SketchwareUtil.showMessage(getApplicationContext(), getApplicationContext().getResources().getString(R.string.delete_counter_label));
+						SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.delete_counter_label));
 						return true;
 					}
 				});
@@ -275,9 +274,7 @@ final ImageView delete_button = _view.findViewById(R.id.delete_button);
 					@Override
 					public void onClick(View _view) {
 						String id = counters.get(_position).get("id").toString();
-						MainActivity.notifyCounterRemoved(CounterManager.getInstance().getCounterOfId(id));
 						CounterManager.getInstance().deleteCounter(id);
-						Util.refreshWidgets();
 						_refresh();
 					}
 				});
@@ -285,13 +282,13 @@ final ImageView delete_button = _view.findViewById(R.id.delete_button);
 					@Override
 					public void onCheckedChanged(CompoundButton cb, boolean isChecked) {
 						String id = counters.get(_position).get("id").toString();
+						Util.startService(MainActivity.this);
 						if (isChecked) {
 							CounterManager.getInstance().addNotification(id);
 						}
 						else {
 							CounterManager.getInstance().removeNotification(id);
 						}
-						MainActivity.notifyCounterNotificationStateChanged(CounterManager.getInstance().getCounterOfId(id));
 						_refresh();
 						notification_indicator.setChecked(Boolean.parseBoolean(counters.get(_position).get("has_notification").toString()));
 					}});

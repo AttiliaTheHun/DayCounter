@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="days_left">Il vous reste %s jours!</string>
+    <string name="counter_removed">Le compoir a été effacé</string>
     <string name="about">Sur l\'appli</string>
     <string name="settings">Paramètres</string>
     <string name="counters">Comptoirs</string>

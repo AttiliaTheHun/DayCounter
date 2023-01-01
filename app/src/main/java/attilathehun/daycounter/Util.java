@@ -1,57 +1,58 @@
 package attilathehun.daycounter;
- 
+
 import java.io.IOException;
 import java.io.File;
 import java.io.FileWriter;
- 
+
 import android.content.Context;
 import android.content.Intent;
 import androidx.core.content.FileProvider;
- 
+
 import android.net.Uri;
 import android.app.Activity;
- 
+
 import android.os.Build;
- 
+
+import attilathehun.daycounter.Counter;
 import attilathehun.daycounter.FileUtil;
 import attilathehun.daycounter.ServiceLauncher;
 import attilathehun.daycounter.NotificationService;
 import attilathehun.daycounter.WidgetProvider;
 import attilathehun.daycounter.WidgetLightProvider;
- 
+
 /**
- * A collection of methods that are crucial for other classes yet belong in none of them.
+ * A collection of handy methods to simplify tasks in other classes.
  */
 public class Util {
- 
+
     public static final boolean DEBUG = true;
     private static Context context = null;
- 
+
     /**
      * @return stringified path of the log file
      */
     private static String getLogPath() {
         return FileUtil.getExternalStorageDir() + "/DayCounterLog.txt";
     }
- 
+
     /**
-     * Logs a message inside the log file
+     * Logs a String to the end of the log file. Works only in debug mode.
      */
     public static void log(String message) {
         if (DEBUG) {
             appendFile(getLogPath(), message + "\n");
         }
     }
- 
+
     /**
-     * Empties the log file.
+     * Empties the log file. Works only in debug mode.
      */
     public static void clearLog() {
         if (DEBUG) {
             FileUtil.writeFile(Util.getLogPath(), "");
         }
     }
- 
+
     /**
      * Attemps to open the log file in some kind of file viewing app the user has installed,
      * crashes on my friend's phone though.
@@ -72,14 +73,7 @@ public class Util {
             Util.log(e.toString());
         }
     }
- 
-    /**
-     * A version of Util#viewLog(context) that uses the default context.
-     */
-    public static void viewLog() {
-        Util.viewLog(Util.getContext());
-    }
- 
+
     /**
      * Creates a new file on the specified path.
      * I think I stole this from Sketchware's FileUtil.java.
@@ -91,9 +85,9 @@ public class Util {
             String dirPath = path.substring(0, lastSep);
             FileUtil.makeDir(dirPath);
         }
- 
+
         File file = new File(path);
- 
+
         try {
             if (!file.exists())
                 file.createNewFile();
@@ -101,7 +95,7 @@ public class Util {
             e.printStackTrace();
         }
     }
- 
+
     /**
      * Attaches a String to the file's content.
      * I think I stole this from Sketchware' FileUtil.java.
@@ -111,7 +105,7 @@ public class Util {
     private static void appendFile(String path, String str) {
         createNewFile(path);
         FileWriter fileWriter = null;
- 
+
         try {
             fileWriter = new FileWriter(new File(path), true);
             fileWriter.write(str);
@@ -127,113 +121,100 @@ public class Util {
             }
         }
     }
- 
+
     /**
-     * Sets the default context, allowing the use of contextless methods.
+     * Sets the default context, allowing the use of contextless methods. The storing of context has always been problematical,
+	 * because it is the easiest memory leak to implement. It is discouraged to store Activites and Services, use getApplicationContext() instead.
      * @param context the context object to use as default
      */
-    public static void setContext(Context context) {
+    private static void setContext(Context context) {
         Util.context = context;
     }
- 
+
     /**
-     * A version of Util#setContext(context) to use when expecting to have a default context set.
-     */
-    public static void setContextIfNull(Context context) {
-        if (Util.getContext() == null) {
-            Util.setContext(context);
-        }
-    }
- 
-    /**
-     * Returns the default context.
+     * Returns the default context. Be sure to set the default context beforehand.
      * @return default context
      */
     public static Context getContext() {
+        if (Util.context == null) {
+            throw new RuntimeException("The default context is null.");
+        }
         return Util.context;
     }
- 
- 
+
+	/**
+	 * Yeah, from now we use this with respect for memory leaks, yeye.
+	 * @param context the context
+	 */
+    public static void setContextIfNull(Context context) {
+        if (Util.context == null || !Class.forName("android.app.Application").isInstance(Util.context)) {
+            Util.setContext(context);
+        }
+    }
+
+
+	/**
+	 * We can use this method to clear the default context if it is the same as the one we passed into it.
+	 * @param context the context
+	 */
+    public static void clearContextIfEquals(Context context) {
+        if (Util.context != null && Util.context.equals(context)) {
+            Util.context = null;
+        }
+    }
+
+
     /**
      * Starts the notification service, if there is any notification to be displayed.
      * @param context a context to use
      */
-    public static void startService(Context context) {
+    public static void startService(final Context context) {
         if (CounterManager.getInstance().getNotificationCounters().size() == 0) {
-            // Util.log("No notification counters found");
+            Util.log("No notification counters found");
             return;
         }
- 
+
         final Intent intent = new Intent(context, NotificationService.class);
-        NotificationService.createNotificationChannel();
         // Start the service in a new thread so it does not block the UI
         new Thread(new Runnable() {
             @Override
             public void run() {
-                getContext().startService(intent);
+				// It is bad enough to have one service, no need for more.
+				if (!NotificationService.isRunning()) {
+					context.startForegroundService(intent);
+				}
             }
         }).start();
- 
     }
- 
+
     /**
-     * A contextless version of Util#startService(context) which uses the default context
+     * A wrapper over Counter#getDaysRemaining() that supports translations.
      */
-    public static void startService() {
-        Util.startService(Util.getContext());
-    }
- 
-    /**
-     * It is bad enough to have one service, no need for more.
-     */
-    public static void startServiceIfNotRunning() {
-        if (!NotificationService.isRunning()) {
-            startService();
-        }
-    }
- 
-    /**
-     * A wrapper over Counter#getDaysRemaining() that works with translations.
-     */
-    public static String getDaysRemaining(Counter counter) {
+    public static String getDaysRemaining(Counter counter, Context context) {
         String daysLeft = String.format("%,d\n", counter.getDaysRemaining());
-        String output = getContext().getResources().getString(R.string.days_left);
+        String output = context.getResources().getString(R.string.days_left);
         return String.format(output, daysLeft);
     }
- 
-    /**
-     * Delete as soon as the multicounter version is built.
-     */
-    public static String getDaysRemaining() {
-        return getDaysRemaining(CounterManager.getInstance().getCounters().get(0));
-    }
- 
-    /*
-     * We will want this, soon.
-     * @param activity any activity
-     * @param languageCode remove and hardcode english!
-     * @return
-     */
-    /*
-    public static void forceEnglish(Activity activity, String languageCode) {
-        Locale locale = new Locale(languageCode);
-        Locale.setDefault(locale);
-        Resources resources = activity.getResources();
-        Configuration config = resources.getConfiguration();
-        config.setLocale(locale);
-        resources.updateConfiguration(config, resources.getDisplayMetrics());
-    }*/
- 
+
     public static int random(int min, int max) {
         return (int) Math.floor((Math.random()) * (max - min + 1) + min);
     }
- 
+
     /**
      * The same way notifications need to be refreshed, this method refreshes the homescreen widgets.
      */
-    public static void refreshWidgets() {
-        WidgetProvider.refresh();
-        WidgetLightProvider.refresh();
+    public static void refreshWidgets(Context context) {
+        WidgetProvider.refresh(context);
+        WidgetLightProvider.refresh(context);
     }
- 
+
+    public static String getString(int id, Context context) {
+        return context.getResources().getString(id);
+    }
+
+    public static void restartService(Context context) {
+        context.stopService(new Intent(context, NotificationService.class));
+        Util.startService(context);
+    }
+
 }

@@ -99,16 +99,17 @@ public class SettingsActivity extends AppCompatActivity {
 					finish();
 				}
 				else {
+					CounterManager.hold(SettingsActivity.this);
 					if (_position == 1) {
 						if (CounterManager.getInstance().exportBytesDefault()) {
-							SketchwareUtil.showMessage(getApplicationContext(), String.format(Util.getContext().getResources().getString(R.string.exported_to), CounterManager.DEFAULT_PATH));
+							SketchwareUtil.showMessage(getApplicationContext(), String.format(getResources().getString(R.string.exported_to), CounterManager.DEFAULT_EXPORT_PATH));
 							
 						}
 					}
 					else {
 						if (_position == 2) {
 							if (CounterManager.getInstance().exportJSONDefault()) {
-								SketchwareUtil.showMessage(getApplicationContext(), String.format(Util.getContext().getResources().getString(R.string.exported_to_json), CounterManager.DEFAULT_PATH));
+								SketchwareUtil.showMessage(getApplicationContext(), String.format(getResources().getString(R.string.exported_to_json), CounterManager.DEFAULT_EXPORT_PATH));
 							}
 						}
 						else {
@@ -140,7 +141,7 @@ public class SettingsActivity extends AppCompatActivity {
 			public boolean onItemLongClick(AdapterView<?> _param1, View _param2, int _param3, long _param4) {
 				final int _position = _param3;
 				if (_position == 0) {
-					SketchwareUtil.showMessage(getApplicationContext(), Util.getContext().getResources().getString(R.string.clear_data_description));
+					SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.clear_data_description));
 				}
 				else {
 					
@@ -178,15 +179,15 @@ public class SettingsActivity extends AppCompatActivity {
 			public boolean onItemLongClick(AdapterView<?> _param1, View _param2, int _param3, long _param4) {
 				final int _position = _param3;
 				if (_position == 0) {
-					SketchwareUtil.showMessage(getApplicationContext(), Util.getContext().getResources().getString(R.string.start_service_description));
+					SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.start_service_description));
 				}
 				else {
 					if (_position == 1) {
-						SketchwareUtil.showMessage(getApplicationContext(), Util.getContext().getResources().getString(R.string.view_log_description));
+						SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.view_log_description));
 					}
 					else {
 						if (_position == 2) {
-							SketchwareUtil.showMessage(getApplicationContext(), Util.getContext().getResources().getString(R.string.clear_log_description));
+							SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.clear_log_description));
 						}
 						else {
 							
@@ -199,7 +200,8 @@ public class SettingsActivity extends AppCompatActivity {
 	}
 	
 	private void initializeLogic() {
-		setTitle(Util.getContext().getResources().getString(R.string.settings));
+		Util.setContextIfNull(this);
+		setTitle(getResources().getString(R.string.settings));
 		_initListsAndViews();
 		//private static final int CHOOSE_FILE_REQUESTCODE = 8777;
 		//private static final int PICKFILE_RESULT_CODE = 8778;
@@ -208,15 +210,22 @@ public class SettingsActivity extends AppCompatActivity {
 	@Override
 	protected void onActivityResult(int _requestCode, int _resultCode, Intent _data) {
 		super.onActivityResult(_requestCode, _resultCode, _data);
+		Util.setContextIfNull(this);
+		if (_data == null) {
+				return;
+		}
 		Uri uri = _data.getData();
 		String path = UriUtils.getPathFromUri(this, uri);
 		if (path.toString().endsWith(".json")) {
 				if (CounterManager.getInstance().importJSON(path)) {
-						SketchwareUtil.showMessage(getApplicationContext(), Util.getContext().getResources().getString(R.string.import_successful));
+						SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.import_successful));
 				}
 		} else if (CounterManager.getInstance().importBytes(path)) {
-				SketchwareUtil.showMessage(getApplicationContext(), Util.getContext().getResources().getString(R.string.import_successful));
+				SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.import_successful));
 		}
+		Util.restartService(this);
+		Util.refreshWidgets(this);
+		CounterManager.release();
 		switch (_requestCode) {
 			
 			default:
@@ -227,24 +236,31 @@ public class SettingsActivity extends AppCompatActivity {
 	@Override
 	public void onBackPressed() {
 		intent.setClass(getApplicationContext(), MainActivity.class);
+		intent.putExtra("ABORTED", "true");
 		startActivity(intent);
 		finish();
 	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		Util.clearContextIfEquals(this);
+	}
 	public void _initListsAndViews() {
-		developer_options_list.add(Util.getContext().getResources().getString(R.string.start_service));
-		developer_options_list.add(Util.getContext().getResources().getString(R.string.clear_log));
-		developer_options_list.add(Util.getContext().getResources().getString(R.string.view_log));
+		developer_options_list.add(getResources().getString(R.string.start_service));
+		developer_options_list.add(getResources().getString(R.string.view_log));
+		developer_options_list.add(getResources().getString(R.string.clear_log));
 		developer_options_view.setAdapter(new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_list_item_1, developer_options_list));
 		((BaseAdapter)developer_options_view.getAdapter()).notifyDataSetChanged();
-		functional_options_list.add(Util.getContext().getResources().getString(R.string.clear_data));
-		functional_options_list.add(Util.getContext().getResources().getString(R.string.export_data_bytes));
-		functional_options_list.add(Util.getContext().getResources().getString(R.string.export_data_json));
-		functional_options_list.add(Util.getContext().getResources().getString(R.string.import_data_bytes));
-		functional_options_list.add(Util.getContext().getResources().getString(R.string.import_data_json));
+		functional_options_list.add(getResources().getString(R.string.clear_data));
+		functional_options_list.add(getResources().getString(R.string.export_data_bytes));
+		functional_options_list.add(getResources().getString(R.string.export_data_json));
+		functional_options_list.add(getResources().getString(R.string.import_data_bytes));
+		functional_options_list.add(getResources().getString(R.string.import_data_json));
 		functional_options_view.setAdapter(new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_list_item_1, functional_options_list));
 		((BaseAdapter)functional_options_view.getAdapter()).notifyDataSetChanged();
-		textview3.setText(Util.getContext().getResources().getString(R.string.developer_settings));
-		textview1.setText(Util.getContext().getResources().getString(R.string.functional_settings));
+		textview3.setText(getResources().getString(R.string.developer_settings));
+		textview1.setText(getResources().getString(R.string.functional_settings));
 	}
 	
 }

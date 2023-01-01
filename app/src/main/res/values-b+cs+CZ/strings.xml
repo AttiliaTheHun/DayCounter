@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="days_left">Zbývá %n dnů!</string>
+    <string name="days_left">Zbývá %s dnů!</string>
+    <string name="counter_removed">Časovač smazán</string>
     <string name="about">O aplikaci</string>
     <string name="settings">Nastavení</string>
     <string name="counters">Countery</string>

@@ -93,11 +93,11 @@ public class CreateCounterActivity extends AppCompatActivity {
 			@Override
 			public void onClick(View _view) {
 				if (enter_year.getText().toString().equals("")) {
-					SketchwareUtil.showMessage(getApplicationContext(), Util.getContext().getResources().getString(R.string.fill_all_fields));
+					SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.fill_all_fields));
 				}
 				else {
 					if (enter_target_age.getText().toString().equals("")) {
-						SketchwareUtil.showMessage(getApplicationContext(), Util.getContext().getResources().getString(R.string.fill_all_fields));
+						SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.fill_all_fields));
 					}
 					else {
 						SketchwareUtil.hideKeyboard(getApplicationContext());
@@ -108,12 +108,12 @@ public class CreateCounterActivity extends AppCompatActivity {
 							int targetYear = Integer.parseInt(enter_year.getText().toString()) + targetAge;
 						boolean success = CounterManager.getInstance().addCounter(name, targetDay, targetMonth, targetYear, targetAge);
 						if (success) {
-							Util.startServiceIfNotRunning();
+							Util.startService(CreateCounterActivity.this);
 							intent.setClass(getApplicationContext(), MainActivity.class);
 							startActivity(intent);
 							finish();
 						} else {
-							SketchwareUtil.showMessage(getApplicationContext(), Util.getContext().getResources().getString(R.string.invalid_input));
+							SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.invalid_input));
 							
 						}
 					}
@@ -163,6 +163,7 @@ public class CreateCounterActivity extends AppCompatActivity {
 	}
 	
 	private void initializeLogic() {
+		Util.setContextIfNull(this);
 		_initLists();
 		_initTranslation();
 		month_selector.setAdapter(new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_spinner_dropdown_item, months));
@@ -173,38 +174,46 @@ public class CreateCounterActivity extends AppCompatActivity {
 	
 	@Override
 	public void onBackPressed() {
+		Util.clearContextIfEquals(this);
 		intent.setClass(getApplicationContext(), MainActivity.class);
+		intent.putExtra("ABORTED", "true");
 		startActivity(intent);
 		finish();
+	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		Util.clearContextIfEquals(this);
 	}
 	public void _initLists() {
 		for(int i = 1; i <= 31; i++){
 			  days.add(Integer.toString(i));
 		}
-		months.add(Util.getContext().getResources().getString(R.string.january));
-				months.add(Util.getContext().getResources().getString(R.string.february));
-				months.add(Util.getContext().getResources().getString(R.string.march));
-				months.add(Util.getContext().getResources().getString(R.string.april));
-				months.add(Util.getContext().getResources().getString(R.string.may));
-				months.add(Util.getContext().getResources().getString(R.string.june));
-				months.add(Util.getContext().getResources().getString(R.string.july));
-				months.add(Util.getContext().getResources().getString(R.string.august));
-				months.add(Util.getContext().getResources().getString(R.string.september));
-				months.add(Util.getContext().getResources().getString(R.string.october));
-				months.add(Util.getContext().getResources().getString(R.string.november));
-				months.add(Util.getContext().getResources().getString(R.string.december));
+		months.add(getResources().getString(R.string.january));
+				months.add(getResources().getString(R.string.february));
+				months.add(getResources().getString(R.string.march));
+				months.add(getResources().getString(R.string.april));
+				months.add(getResources().getString(R.string.may));
+				months.add(getResources().getString(R.string.june));
+				months.add(getResources().getString(R.string.july));
+				months.add(getResources().getString(R.string.august));
+				months.add(getResources().getString(R.string.september));
+				months.add(getResources().getString(R.string.october));
+				months.add(getResources().getString(R.string.november));
+				months.add(getResources().getString(R.string.december));
 		
 	}
 	
 	
 	public void _initTranslation() {
-		counter_name_label.setText(Util.getContext().getResources().getString(R.string.counter_name_label));
-		birth_date_label.setText(Util.getContext().getResources().getString(R.string.birth_date_label));
-		highest_estimated_age_label.setText(Util.getContext().getResources().getString(R.string.highest_estimated_age_label));
-		create_button.setText(Util.getContext().getResources().getString(R.string.create_counter_label));
-		name_box.setHint(Util.getContext().getResources().getString(R.string.counter_name_hint));
-		enter_year.setHint(Util.getContext().getResources().getString(R.string.birth_date_year_label));
-		enter_target_age.setHint(Util.getContext().getResources().getString(R.string.highest_estimated_age_hint));
+		counter_name_label.setText(getResources().getString(R.string.counter_name_label));
+		birth_date_label.setText(getResources().getString(R.string.birth_date_label));
+		highest_estimated_age_label.setText(getResources().getString(R.string.highest_estimated_age_label));
+		create_button.setText(getResources().getString(R.string.create_counter_label));
+		name_box.setHint(getResources().getString(R.string.counter_name_hint));
+		enter_year.setHint(getResources().getString(R.string.birth_date_year_label));
+		enter_target_age.setHint(getResources().getString(R.string.highest_estimated_age_hint));
 	}
 	
 }

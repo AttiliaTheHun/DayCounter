@@ -69,6 +69,8 @@ Adds `NotificationService` on the list of `DateChangedListener` implementors, ha
 See [DateChangedListener.java](https://github.com/AttiliaTheHun/DayCounter/blob/master/app/src/main/java/attilathehun/daycounter/DateChangedListener.java).
 ### createNotifications()
 Creates the notifications for the counters.
+### public void ropeIsTheWayPleaseHelpMe()
+This method does what a `removeNotification()` method would do. It removes a notification. The problem is that one notification has to alwaysbe around, because such are the rules for [foreground services](https://developer.android.com/guide/components/foreground-services). Thus we need to check this scenario and eventually recreate some other notification as the service indicator. 
 ## ServiceLauncher.java
 *extends BroadcastReceiver*<br><br>
 Listens for broadcasts and upon interception notifies all the [DateChangedListener.java](https://github.com/AttiliaTheHun/DayCounter/blob/master/app/src/main/java/attilathehun/daycounter/DateChangedListener.java) implementors
@@ -89,18 +91,24 @@ The widget setup activity. See  [WidgetActivity.java](https://github.com/Attilia
 [Create a simple widget](https://developer.android.com/guide/topics/appwidgets),
 [Activity](https://developer.android.com/reference/android/app/Activity).
 ## Widget(Light)Provider.java
-*extends AppWidgetProvider*<br><br>
+*extends AppWidgetProvider implements CounterEventListener*<br><br>
 The backend behind our app's widget. Handles the logic, the content, etc. See [WidgetProvider.java](https://github.com/AttiliaTheHun/DayCounter/blob/master/app/src/main/java/attilathehun/daycounter/WidgetProvider.java),
 [WidgetLightProvider.java](https://github.com/AttiliaTheHun/DayCounter/blob/master/app/src/main/java/attilathehun/daycounter/WidgetLightProvider.java),
 [AppWidgetProvider](https://developer.android.com/reference/android/appwidget/AppWidgetProvider).
-### void updateWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId)
-Updates the content of the widget, making sure the remaining days count is up to date
+### public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
+Override from `AppWidgetProvider`. Is called when the `ACTION_APPWIDGET_UPDATE` broadcast is received. Updates the widgets
+### public void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId)
+Updates the content of the widget, making sure the remaining days count is up to date.
+### public static void refresh(Context context)
+Manually refreshes all the widgets.
 # Interfaces
 ## CounterEventListener.java
 An interface to provide a communication channel between components, that need to update when there are changes to the counters.
 See [CounterEventListener.java](https://github.com/AttiliaTheHun/DayCounter/blob/master/app/src/main/java/attilathehun/daycounter/CounterEventListener.java)
 ### Implemented by:
-- [NotificationService.java](https://github.com/AttiliaTheHun/DayCounter/blob/master/app/src/main/java/attilathehun/daycounter/NotificationService.java)
+- [NotificationService.java](https://github.com/AttiliaTheHun/DayCounter/blob/master/app/src/main/java/attilathehun/daycounter/WidgetProvider.java)
+- [WidgetProvider.java](https://github.com/AttiliaTheHun/DayCounter/blob/master/app/src/main/java/attilathehun/daycounter/WidgetLightProvider.java)
+- [WidgetLightProvider.java](https://github.com/AttiliaTheHun/DayCounter/blob/master/app/src/main/java/attilathehun/daycounter/NotificationService.java)
 ### public void onCounterDeleted(Counter counter)
 Notifies the implementors that a counter has been deleted and provides access the the former counter's data.
 ### public void onCounterNotificationStateChanged(Counter counter)

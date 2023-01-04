@@ -7,15 +7,15 @@ import attilathehun.daycounter.Counter;
 */
 public interface CounterEventListener {
 		/**
-		 * Should be emitted when a notification is either added or removed from/onto a Counter.
-		 * @param counter concerned Counter representation, NOT a reference!
-		 */
+* Should be emitted when a notification is either added or removed from/onto a Counter.
+* @param counter concerned Counter representation, NOT a reference!
+*/
 		public void onCounterNotificationStateChanged(Counter counter);
 		
 		/**
-		 * Should be emitted when a Counter is destroyed.
-		 * @param counter counter concerned Counter representation, NOT a reference!
-		 */
+* Should be emitted when a Counter is destroyed.
+* @param counter counter concerned Counter representation, NOT a reference!
+*/
 		public void onCounterRemoved(Counter counter);
 }
 

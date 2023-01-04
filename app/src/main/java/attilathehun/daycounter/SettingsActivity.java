@@ -99,7 +99,6 @@ public class SettingsActivity extends AppCompatActivity {
 					finish();
 				}
 				else {
-					CounterManager.hold(SettingsActivity.this);
 					if (_position == 1) {
 						if (CounterManager.getInstance().exportBytesDefault()) {
 							SketchwareUtil.showMessage(getApplicationContext(), String.format(getResources().getString(R.string.exported_to), CounterManager.DEFAULT_EXPORT_PATH));
@@ -167,7 +166,13 @@ public class SettingsActivity extends AppCompatActivity {
 							SketchwareUtil.showMessage(getApplicationContext(), "log cleared");
 						}
 						else {
-							
+							if (_position == 3) {
+								Util.refreshWidgets(getApplicationContext());
+								SketchwareUtil.showMessage(getApplicationContext(), "widgets refreshed");
+							}
+							else {
+								
+							}
 						}
 					}
 				}
@@ -190,7 +195,12 @@ public class SettingsActivity extends AppCompatActivity {
 							SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.clear_log_description));
 						}
 						else {
-							
+							if (_position == 3) {
+								SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.refresh_widgets_description));
+							}
+							else {
+								
+							}
 						}
 					}
 				}
@@ -210,7 +220,7 @@ public class SettingsActivity extends AppCompatActivity {
 	@Override
 	protected void onActivityResult(int _requestCode, int _resultCode, Intent _data) {
 		super.onActivityResult(_requestCode, _resultCode, _data);
-		Util.setContextIfNull(this);
+		Util.setContextIfNull(getApplicationContext());
 		if (_data == null) {
 				return;
 		}
@@ -225,7 +235,6 @@ public class SettingsActivity extends AppCompatActivity {
 		}
 		Util.restartService(this);
 		Util.refreshWidgets(this);
-		CounterManager.release();
 		switch (_requestCode) {
 			
 			default:
@@ -250,6 +259,7 @@ public class SettingsActivity extends AppCompatActivity {
 		developer_options_list.add(getResources().getString(R.string.start_service));
 		developer_options_list.add(getResources().getString(R.string.view_log));
 		developer_options_list.add(getResources().getString(R.string.clear_log));
+		developer_options_list.add(getResources().getString(R.string.refresh_widgets));
 		developer_options_view.setAdapter(new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_list_item_1, developer_options_list));
 		((BaseAdapter)developer_options_view.getAdapter()).notifyDataSetChanged();
 		functional_options_list.add(getResources().getString(R.string.clear_data));

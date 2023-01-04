@@ -46,6 +46,8 @@
     <string name="view_log">View Log</string>
     <string name="view_log_description">Open application log file</string>
     <string name="clear_log">Clear Log</string>
+    <string name="refresh_widgets">Refresh widgets</string>
+    <string name="refresh_widgets_description">Refresh the homescreen widgets data</string>
     <string name="clear_log_description">Erase application log file</string>
     <string name="clear_data">Clear Data</string>
     <string name="clear_data_description">Delete all counters</string>

@@ -167,9 +167,9 @@ public class MainActivity extends AppCompatActivity {
 	public void _init() {
 		// Force Sketchware to include the Gson library
 		useless = new Gson().toJson(counters);
-		CounterManager.initFilePath(this);
-		Util.setContextIfNull(this);
+		Util.setContextIfNull(getApplicationContext());
 		Util.startService(this);
+		Util.registerProviders();
 		_refresh();
 	}
 	

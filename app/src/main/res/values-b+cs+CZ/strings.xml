@@ -42,6 +42,8 @@
     <string name="view_log_description">Otevře soubor s logem aplikace</string>
     <string name="clear_log">Vymazat log</string>
     <string name="clear_log_description">Vyprázdní soubor s logem aplikace</string>
+    <string name="refresh_widgets">Aktualizovat widgety</string>
+    <string name="refresh_widgets_description">Aktualizovat widgety na domovské obrazovce </string>
     <string name="clear_data">Vymazat data</string>
     <string name="clear_data_description">Smaže všechny countery</string>
     <string name="export_data_bytes">Exportovat (v bytech)</string>

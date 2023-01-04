@@ -1,16 +1,16 @@
 package attilathehun.daycounter;
-
+ 
 import java.util.Calendar;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.Serializable;
 import java.time.Year;
-
+ 
 import android.content.Context;
-
+ 
 import attilathehun.daycounter.Util;
 import attilathehun.daycounter.CounterEventListener;
-
+ 
 /**
 * This class is responsible for the counting process. Instances of this class represent the actual counters.
 */
@@ -36,6 +36,8 @@ public class Counter implements Serializable {
 		
 		private int widgetId = -1; //No bound widget by default
 		
+  	 	private transient Context context = null; //do not assign unless absolutely necessary!
+
 		/**
 		 * Prefered Counter constructor.
 		 * @param id id of the Counter
@@ -86,10 +88,10 @@ public class Counter implements Serializable {
 		
 		/**
 		 * A propertyless Counter could cause severe crashes, thus we forbid it. Do not use!
+		 * The original idea was to make it throw Exceptions, but the Gson library uses empty constructors
+		 * for decoding JSON into objects.
 		 */
-		private Counter() {
-			throw new RuntimeException("Empty counters are forbidden!");
-		}
+		private Counter() {}
 		
 		/**
 		 * Official way of getting Counter instances, that deals with nameless Counters and performs parameter-checking.
@@ -104,12 +106,12 @@ public class Counter implements Serializable {
 		public static Counter create(String id, String name, int targetDay, int targetMonth, int targetYear, int targetAge) {
 				
 				if (id == null || targetDay < 0 || targetMonth < 0 || targetYear < 0 || targetAge < 0) {
-
+ 
 						return null;
 				}
 				
 				if (name.equals("")) {
-
+ 
 						return new Counter(id, targetDay, targetMonth, targetYear, targetAge);
 				}
 				
@@ -150,7 +152,7 @@ public class Counter implements Serializable {
 				daysRemaining += getLeapYears();
 				
 				//We want today to be counted, because it is never too late! :)
-
+ 
 				return daysRemaining + 1;
 				
 		}
@@ -318,7 +320,7 @@ public class Counter implements Serializable {
 		public String getName() {
 				return name;
 		}
-
+ 
 	/**
 	 * Changes the notification status of the counter to true and fires CounterEventListerner#onCounterNotificationStateChanged().
 	 */
@@ -327,7 +329,7 @@ public class Counter implements Serializable {
 				this.hasNotification = true;
 				Counter.notifyCounterNotificationStateChanged(this);
 		}
-
+ 
 	/**
 	 * Changes the notification status of the counter to false and fires CounterEventListerner#onCounterNotificationStateChanged().
 	 */
@@ -362,8 +364,8 @@ public class Counter implements Serializable {
 				
 		this.widgetId = -1;
 	}
-
-
+ 
+ 
 	/**
 	 * Sends the CounterEventListener#onCounterNotificationStateChanged() event to all registered listeners.
 	 * @param counter counter whose notification state has been changed
@@ -373,8 +375,8 @@ public class Counter implements Serializable {
 			listener.onCounterNotificationStateChanged(counter);
 		}
 	}
-
-
+ 
+ 
 	/**
 	 * This method registers a listener for coutner events.
 	 * @param listener the entity to be registred
@@ -382,7 +384,7 @@ public class Counter implements Serializable {
 	public static void addEventListener(CounterEventListener listener) {
 		Counter.listeners.add(listener);
 	}
-
+ 
 	/**
 	 * Availabilifies the listener list for classes with custom counter events.
 	 * @return list of the listeners
@@ -390,5 +392,24 @@ public class Counter implements Serializable {
 	public static List<CounterEventListener> getEventListeners() {
 		return Counter.listeners;
 	}
+
+	/**
+	 * Stores a Context inside the Counter object. Do not use unless aboslutely necesary to prevent memory leaks.
+	 * Used when we pass a Counter instance through an event and the event listener may not have access to any other
+	 * context.
+	 * @param context a context to inject
+	 */
+	public void inject(Context context) {
+   		this.context = context;
+	}
+
+	/**
+	 * Pulls out the context out of the Counter. The context is null by defualt, unless set with #inject() beforehand.
+	 * @return the stored context (null by default)
+	 */
+	public Context withdraw() {
+    	return this.context;
+	}
 		
 }
+ 

@@ -8,6 +8,8 @@ import java.io.ObjectInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import android.content.Intent;
  
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -81,8 +83,9 @@ public class CounterManager {
     public void deleteCounter(String id) {
         for (int i = 0; i < counters.size(); i++) {
             if (counters.get(i).getId().equals(id)) {
-                CounterManager.notifyCounterRemoved(counters.get(i));
+                Counter counter = counters.get(i);
                 counters.remove(i);
+                CounterManager.notifyCounterRemoved(counter);
                 break;
             }
         }
@@ -212,8 +215,13 @@ public class CounterManager {
      * Wipes the counter collection.
      */
     public void clearCounters() {
+        for (Counter c : counters) {
+            c.removeNotification();
+        }
         this.counters.clear();
         save();
+        Util.getContext().stopService(new Intent(Util.getContext(), NotificationService.class));
+        Util.log("Cleared the data");
     }
  
     /**
@@ -317,6 +325,7 @@ public class CounterManager {
             out.write(bytes);
             in.close();
             out.close();
+            Util.log("Exported to " + path);
             return true;
         } catch (Exception e) {
             SketchwareUtil.showMessage(Util.getContext(), e.getMessage());
@@ -338,6 +347,7 @@ public class CounterManager {
             FileOutputStream out = new FileOutputStream(exportFile, false);
             out.write(jsonData.getBytes("UTF-8"));
             out.close();
+            Util.log("Exported to " + path);
             return true;
         } catch (Exception e) {
             SketchwareUtil.showMessage(Util.getContext(), e.getMessage());
@@ -362,7 +372,7 @@ public class CounterManager {
             objectInputStream.close();
             dataFileInputStream.close();
             counters = list;
-            Util.log("Loaded list of size " + counters.size());
+            Util.log("Imported list of size " + counters.size() + " from " + path);
             save();
             return true;
         } catch (Exception e) {
@@ -382,6 +392,7 @@ public class CounterManager {
             in.close();
             counters = new Gson().fromJson(input, new TypeToken<ArrayList<Counter>>() {
             }.getType());
+            Util.log("Imported list of size " + counters.size() + " from " + path);
             save();
             return true;
         } catch (Exception e) {

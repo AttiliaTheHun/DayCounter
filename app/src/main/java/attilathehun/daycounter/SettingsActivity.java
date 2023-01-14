@@ -100,35 +100,19 @@ public class SettingsActivity extends AppCompatActivity {
 				}
 				else {
 					if (_position == 1) {
-						if (CounterManager.getInstance().exportBytesDefault()) {
-							SketchwareUtil.showMessage(getApplicationContext(), String.format(getResources().getString(R.string.exported_to), CounterManager.DEFAULT_EXPORT_PATH));
-							
+						if (CounterManager.getInstance().exportJSONDefault()) {
+							SketchwareUtil.showMessage(getApplicationContext(), String.format(getResources().getString(R.string.exported_to_json), CounterManager.DEFAULT_EXPORT_PATH));
 						}
 					}
 					else {
 						if (_position == 2) {
-							if (CounterManager.getInstance().exportJSONDefault()) {
-								SketchwareUtil.showMessage(getApplicationContext(), String.format(getResources().getString(R.string.exported_to_json), CounterManager.DEFAULT_EXPORT_PATH));
-							}
+							Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
+							chooseFile.setType("*/*");
+							chooseFile = Intent.createChooser(chooseFile, "Choose a file");
+							startActivityForResult(chooseFile, PICKFILE_RESULT_CODE);
 						}
 						else {
-							if (_position == 3) {
-								Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-								chooseFile.setType("*/*");
-								chooseFile = Intent.createChooser(chooseFile, "Choose a file");
-								startActivityForResult(chooseFile, PICKFILE_RESULT_CODE);
-							}
-							else {
-								if (_position == 4) {
-									Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-									chooseFile.setType("*/*");
-									chooseFile = Intent.createChooser(chooseFile, "Choose a file");
-									startActivityForResult(chooseFile, PICKFILE_RESULT_CODE);
-								}
-								else {
-									
-								}
-							}
+							
 						}
 					}
 				}
@@ -143,7 +127,17 @@ public class SettingsActivity extends AppCompatActivity {
 					SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.clear_data_description));
 				}
 				else {
-					
+					if (_position == 1) {
+						SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.export_data_json_description));
+					}
+					else {
+						if (_position == 2) {
+							SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.import_data_json_description));
+						}
+						else {
+							
+						}
+					}
 				}
 				return true;
 			}
@@ -158,20 +152,36 @@ public class SettingsActivity extends AppCompatActivity {
 				}
 				else {
 					if (_position == 1) {
-						Util.viewLog(getApplicationContext());
+						Util.refreshWidgets(getApplicationContext());
+						SketchwareUtil.showMessage(getApplicationContext(), "widgets refreshed");
 					}
 					else {
 						if (_position == 2) {
-							Util.clearLog();
-							SketchwareUtil.showMessage(getApplicationContext(), "log cleared");
+							if (CounterManager.getInstance().exportBytesDefault()) {
+								SketchwareUtil.showMessage(getApplicationContext(), String.format(getResources().getString(R.string.exported_to), CounterManager.DEFAULT_EXPORT_PATH));
+								
+							}
 						}
 						else {
 							if (_position == 3) {
-								Util.refreshWidgets(getApplicationContext());
-								SketchwareUtil.showMessage(getApplicationContext(), "widgets refreshed");
+								Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
+								chooseFile.setType("*/*");
+								chooseFile = Intent.createChooser(chooseFile, "Choose a file");
+								startActivityForResult(chooseFile, PICKFILE_RESULT_CODE);
 							}
 							else {
-								
+								if (_position == 4) {
+									Util.viewLog(getApplicationContext());
+								}
+								else {
+									if (_position == 5) {
+										Util.clearLog();
+										SketchwareUtil.showMessage(getApplicationContext(), "log cleared");
+									}
+									else {
+										
+									}
+								}
 							}
 						}
 					}
@@ -188,18 +198,28 @@ public class SettingsActivity extends AppCompatActivity {
 				}
 				else {
 					if (_position == 1) {
-						SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.view_log_description));
+						SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.refresh_widgets_description));
 					}
 					else {
 						if (_position == 2) {
-							SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.clear_log_description));
+							SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.export_data_bytes_description));
 						}
 						else {
 							if (_position == 3) {
-								SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.refresh_widgets_description));
+								SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.import_data_bytes_description));
 							}
 							else {
-								
+								if (_position == 4) {
+									SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.view_log_description));
+								}
+								else {
+									if (_position == 5) {
+										SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.clear_log_description));
+									}
+									else {
+										
+									}
+								}
 							}
 						}
 					}
@@ -257,15 +277,15 @@ public class SettingsActivity extends AppCompatActivity {
 	}
 	public void _initListsAndViews() {
 		developer_options_list.add(getResources().getString(R.string.start_service));
+		developer_options_list.add(getResources().getString(R.string.refresh_widgets));
+		developer_options_list.add(getResources().getString(R.string.export_data_bytes));
+		developer_options_list.add(getResources().getString(R.string.import_data_bytes));
 		developer_options_list.add(getResources().getString(R.string.view_log));
 		developer_options_list.add(getResources().getString(R.string.clear_log));
-		developer_options_list.add(getResources().getString(R.string.refresh_widgets));
 		developer_options_view.setAdapter(new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_list_item_1, developer_options_list));
 		((BaseAdapter)developer_options_view.getAdapter()).notifyDataSetChanged();
 		functional_options_list.add(getResources().getString(R.string.clear_data));
-		functional_options_list.add(getResources().getString(R.string.export_data_bytes));
 		functional_options_list.add(getResources().getString(R.string.export_data_json));
-		functional_options_list.add(getResources().getString(R.string.import_data_bytes));
 		functional_options_list.add(getResources().getString(R.string.import_data_json));
 		functional_options_view.setAdapter(new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_list_item_1, functional_options_list));
 		((BaseAdapter)functional_options_view.getAdapter()).notifyDataSetChanged();

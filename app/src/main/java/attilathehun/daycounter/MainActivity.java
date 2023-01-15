@@ -282,14 +282,14 @@ final ImageView delete_button = _view.findViewById(R.id.delete_button);
 					@Override
 					public void onCheckedChanged(CompoundButton cb, boolean isChecked) {
 						String id = counters.get(_position).get("id").toString();
-						Util.startService(MainActivity.this);
 						if (isChecked) {
 							CounterManager.getInstance().addNotification(id);
+							Util.startService(getApplicationContext());
 						}
 						else {
 							CounterManager.getInstance().removeNotification(id);
 						}
-						_refresh();
+						counters = CounterManager.getInstance().getCountersData();
 						notification_indicator.setChecked(Boolean.parseBoolean(counters.get(_position).get("has_notification").toString()));
 					}});
 			} catch (Exception e) { Util.log(e.getMessage());}

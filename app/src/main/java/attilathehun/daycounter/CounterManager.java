@@ -1,5 +1,5 @@
 package attilathehun.daycounter;
- 
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
@@ -10,48 +10,50 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.content.Intent;
- 
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
- 
+
 import attilathehun.daycounter.Util;
 import attilathehun.daycounter.Counter;
- 
+
 /**
  * This class manages a collection of the Counter objects, that represent the actual counters. It is the central class through all manipulation of the
  * counters data is done.
  */
 public class CounterManager {
- 
+
     public static final String DEFAULT_EXPORT_PATH = "/storage/emulated/0/counters";
     public static String SAVE_FILE_PATH = Util.getContext().getFilesDir() + "/data";
- 
+
     private static CounterManager instance = new CounterManager();
     private ArrayList<Counter> counters = new ArrayList<Counter>();
- 
+
     // Let this be a singleton!
     private CounterManager() {
         load();
     }
- 
+
     /**
      * The official way to get to the manager instance.
+     *
      * @return the manager reference
      */
     public static CounterManager getInstance() {
         return instance;
     }
- 
+
     private static void notifyCounterRemoved(Counter counter) {
         counter.inject(Util.getContext());
         for (CounterEventListener listener : Counter.getEventListeners()) {
             listener.onCounterRemoved(counter);
         }
     }
- 
+
     /**
      * Official way to add a new Counter to the collection with a parameter check. The counter is represented as data and turned into a Counter instance
      * by the method itself.
+     *
      * @param name        display name of the Counter
      * @param targetDay   Counter target day
      * @param targetMonth Counter target month
@@ -66,18 +68,19 @@ public class CounterManager {
         id = String.valueOf(Util.random(0, 15)) + id.substring(id.length() - 5, id.length());
         // Performs a parameter check of its own and possibly returns null
         Counter temp = Counter.create(id, name, targetDay, targetMonth, targetYear, targetAge);
- 
+
         if (temp == null) {
             return false;
         }
- 
+
         counters.add(temp);
         save();
         return true;
     }
- 
+
     /**
      * Official way of removing Counters.
+     *
      * @param id target Counter id
      */
     public void deleteCounter(String id) {
@@ -91,7 +94,7 @@ public class CounterManager {
         }
         save();
     }
- 
+
     /**
      * Saves the current state of the Counters collection to the app's private storage. The data is saved as a serialized byte stream.
      * It is important to call this method after every data manipulation to prevent data loss due to unexpected interruptions such as device turn offs.
@@ -110,7 +113,7 @@ public class CounterManager {
             Util.log("Can not save the data: " + e.getMessage());
         }
     }
- 
+
     /**
      * Loads the serialized data into memory. Returns if no save file is found.
      * It should be sufficient to call this method only once, at startup.
@@ -129,15 +132,16 @@ public class CounterManager {
             counters = list;
             Util.log("Loaded list of size " + counters.size());
             //Util.log(new Gson().toJson(counters));
- 
+
         } catch (Exception e) {
             Util.log(e.getMessage());
             return;
         }
     }
- 
+
     /**
      * Creates a specially structured ArrayList of the counters. This format is used when displaying data in a ListView.
+     *
      * @return ListView compliant collection of counters data
      */
     public ArrayList<HashMap<String, Object>> getCountersData() {
@@ -152,17 +156,19 @@ public class CounterManager {
         }
         return result;
     }
- 
+
     /**
      * Returns true if there is a Counter in the collection and false if there is not.
+     *
      * @return true if at least one counter exists, false otherwise
      */
     public boolean counterExists() {
         return counters.size() > 0;
     }
- 
+
     /**
      * Returns a list of those counters that are meant to have active notification.
+     *
      * @return a list of counters with notification
      */
     public ArrayList<Counter> getNotificationCounters() {
@@ -174,9 +180,10 @@ public class CounterManager {
         }
         return result;
     }
- 
+
     /**
      * Returns a list of those counters that are bound to a widget.
+     *
      * @return list of counters bound to a widget
      */
     public ArrayList<Counter> getWidgetCounters() {
@@ -188,9 +195,10 @@ public class CounterManager {
         }
         return result;
     }
- 
+
     /**
      * Searches for the counter that is bound to the widget of given id.
+     *
      * @param widgetId target widget id
      * @return Counter that is bound to target widget or null if not found
      */
@@ -202,30 +210,29 @@ public class CounterManager {
         }
         return null;
     }
- 
+
     /**
      * Returns the counters collection in the current state.
+     *
      * @return the counter collection
      */
     public ArrayList<Counter> getCounters() {
         return counters;
     }
- 
+
     /**
      * Wipes the counter collection.
      */
     public void clearCounters() {
-        for (Counter c : counters) {
-            c.removeNotification();
-        }
+        Util.stopService(Util.getContext());
         this.counters.clear();
         save();
-        Util.getContext().stopService(new Intent(Util.getContext(), NotificationService.class));
         Util.log("Cleared the data");
     }
- 
+
     /**
      * Sets the notification status of the counter with the corresponding id to true.
+     *
      * @param id target counter id
      */
     public void addNotification(String id) {
@@ -237,9 +244,10 @@ public class CounterManager {
         }
         save();
     }
- 
+
     /**
      * Sets the notification status of the counter with the corresponding id to false.
+     *
      * @param id target counter id
      */
     public void removeNotification(String id) {
@@ -251,9 +259,10 @@ public class CounterManager {
         }
         save();
     }
- 
+
     /**
      * Binds a physical homescreen widget to a counter whose data it will display.
+     *
      * @param counterId target counter id
      * @param widgetId  target widget id
      */
@@ -267,10 +276,11 @@ public class CounterManager {
         }
         save();
     }
- 
+
     /**
      * Unbinds a physical homescreen widget from a counter.
      * Use cases: widget deleted, wanting to troll the user
+     *
      * @param counterId target counter id
      * @param widgetId  target widget id
      */
@@ -283,9 +293,10 @@ public class CounterManager {
         }
         save();
     }
- 
+
     /**
      * Voids widget status of the counter that is currently bound to the widget of given id.
+     *
      * @param widgetId target widget id
      */
     public void unbindWidgetOfId(int widgetId) {
@@ -298,9 +309,10 @@ public class CounterManager {
         }
         save();
     }
- 
+
     /**
      * Finds the counter that is linked to the given id.
+     *
      * @param counterId target counter id
      * @return corresponding counter representation, NOT a reference! or null if not found
      */
@@ -312,7 +324,7 @@ public class CounterManager {
         }
         return null;
     }
- 
+
     public boolean exportBytes(String path) {
         try {
             File dataFile = new File(SAVE_FILE_PATH);
@@ -332,13 +344,13 @@ public class CounterManager {
             Util.log(e.getMessage());
             return false;
         }
- 
+
     }
- 
+
     public boolean exportBytesDefault() {
         return exportBytes(DEFAULT_EXPORT_PATH);
     }
- 
+
     public boolean exportJSON(String path) {
         try {
             final String jsonData = new Gson().toJson(counters);
@@ -355,11 +367,11 @@ public class CounterManager {
             return false;
         }
     }
- 
+
     public boolean exportJSONDefault() {
         return exportJSON(DEFAULT_EXPORT_PATH + ".json");
     }
- 
+
     public boolean importBytes(String path) {
         try {
             File file = new File(path);
@@ -381,7 +393,7 @@ public class CounterManager {
             return false;
         }
     }
- 
+
     public boolean importJSON(String path) {
         try {
             File importFile = new File(path);
@@ -401,5 +413,5 @@ public class CounterManager {
             return false;
         }
     }
- 
+
 }

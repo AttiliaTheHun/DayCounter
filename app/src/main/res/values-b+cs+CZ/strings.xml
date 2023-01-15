@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="days_left">Zbývá %s dnů!</string>
-    <string name="counter_removed">Časovač smazán</string>
+    <string name="counter_removed">\u010Casova\u010D smazán</string>
     <string name="about">O aplikaci</string>
     <string name="settings">Nastavení</string>
     <string name="counters">Countery</string>
-    <string name="notification_channel_name">Počet zbývajících dnů</string>
+    <string name="notification_channel_name">Po\u010Det zbývajících dnů</string>
     <string name="notification_channel_description">Ukazuje, kolik dní zbývá</string>
-    <string name="default_notification_name">Čas běží</string>
+    <string name="default_notification_name">\u010Cas běží</string>
     <string name="january">Leden</string>
     <string name="february">Únor</string>
     <string name="march">Březen</string>
     <string name="april">Duben</string>
     <string name="may">Květen</string>
-    <string name="june">Červen</string>
-    <string name="july">Červenec</string>
+    <string name="june">\u010Cerven</string>
+    <string name="july">\u010Cervenec</string>
     <string name="august">Srpen </string>
     <string name="september">Září</string>
     <string name="october">Říjen</string>
@@ -27,7 +27,7 @@
     <string name="highest_estimated_age_label">Odhadovaný věk</string>
     <string name="highest_estimated_age_hint">Například 65</string>
     <string name="create_counter_label">Vytvořit counter</string>
-    <string name="widget_receiver_label">Static Indicator</string>
+    <string name="widget_receiver_label">Statický ukazatel</string>
     <string name="show_notification_label">Zobrazit oznámení</string>
     <string name="delete_counter_label">Smazat counter</string>
     <string name="counter_dialog_title">Vyberte counter</string>
@@ -35,9 +35,9 @@
     <string name="counter_dialog_negative">Zrušit</string>
     <string name="import_successful">Import úspěšný</string>
     <string name="developer_settings">Vývojářské</string>
-    <string name="functional_settings">Funkční</string>
+    <string name="functional_settings">Funk\u010Dní</string>
     <string name="start_service">Spustit službu</string>
-    <string name="start_service_description">Spustí notifikační službu, pokud ještě neběží</string>
+    <string name="start_service_description">Spustí notifika\u010Dní službu, pokud ještě neběží</string>
     <string name="view_log">Zobrazit log</string>
     <string name="view_log_description">Otevře soubor s logem aplikace</string>
     <string name="clear_log">Vymazat log</string>

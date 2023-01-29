@@ -79,8 +79,8 @@ upon boot. See [ServiceLauncher.java](https://github.com/AttiliaTheHun/DayCounte
 [BroadcastReceiver](https://developer.android.com/reference/android/content/BroadcastReceiver).
 ## Util.java
 A collection of handy methods to simplify tasks in other modules. See  [Util.java](https://github.com/AttiliaTheHun/DayCounter/blob/master/app/src/main/java/attilathehun/daycounter/Util.java).
-### public void setContext(Context context)
-Sets the default context for contextless methods. See [Context](https://developer.android.com/reference/android/content/Context).
+### public static void setContextIfNull(Context context)
+Sets the default context for contextless methods. Tries to avoid memory leaks as much as possible. See [Context](https://developer.android.com/reference/android/content/Context).
 ### public static void startService()
 Starts the  [NotificationService.java](https://github.com/AttiliaTheHun/DayCounter/blob/master/app/src/main/java/attilathehun/daycounter/NotificationService.java).
 ## Widget(Light)Activity.java
@@ -92,13 +92,13 @@ The widget setup activity. See  [WidgetActivity.java](https://github.com/Attilia
 [Activity](https://developer.android.com/reference/android/app/Activity).
 ## Widget(Light)Provider.java
 *extends AppWidgetProvider implements CounterEventListener*<br><br>
-The backend behind our app's widget. Handles the logic, the content, etc. See [WidgetProvider.java](https://github.com/AttiliaTheHun/DayCounter/blob/master/app/src/main/java/attilathehun/daycounter/WidgetProvider.java),
+The backend behind our app widgets. Handles the logic, the content, etc. See [WidgetProvider.java](https://github.com/AttiliaTheHun/DayCounter/blob/master/app/src/main/java/attilathehun/daycounter/WidgetProvider.java),
 [WidgetLightProvider.java](https://github.com/AttiliaTheHun/DayCounter/blob/master/app/src/main/java/attilathehun/daycounter/WidgetLightProvider.java),
 [AppWidgetProvider](https://developer.android.com/reference/android/appwidget/AppWidgetProvider).
 ### public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
 Override from `AppWidgetProvider`. Is called when the `ACTION_APPWIDGET_UPDATE` broadcast is received. Updates the widgets
 ### public void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId)
-Updates the content of the widget, making sure the remaining days count is up to date.
+Updates the content of the widget, making sure the remaining days count is up to date or that widgets do not show data of a deleted counter.
 ### public static void refresh(Context context)
 Manually refreshes all the widgets.
 # Interfaces
@@ -110,7 +110,7 @@ See [CounterEventListener.java](https://github.com/AttiliaTheHun/DayCounter/blob
 - [WidgetProvider.java](https://github.com/AttiliaTheHun/DayCounter/blob/master/app/src/main/java/attilathehun/daycounter/WidgetLightProvider.java)
 - [WidgetLightProvider.java](https://github.com/AttiliaTheHun/DayCounter/blob/master/app/src/main/java/attilathehun/daycounter/NotificationService.java)
 ### public void onCounterDeleted(Counter counter)
-Notifies the implementors that a counter has been deleted and provides access the the former counter's data.
+Notifies the implementors that a counter has been deleted and provides access to the former counter's data.
 ### public void onCounterNotificationStateChanged(Counter counter)
 Notifies the implementors that a counter's notification state has changed and provides access to the counter's data.
 ## DateChangedListener.java

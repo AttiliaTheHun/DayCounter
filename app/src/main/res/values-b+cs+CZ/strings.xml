@@ -58,4 +58,5 @@
     <string name="invalid_input">Nevhodná hodnota</string>
     <string name="exported_to">Exportováno do %s</string>
     <string name="exported_to_json">Exportováno do %s.json</string>
+    <string name="no_counter_available">Nebyl zalezen žádný \u010Dasova\u010D</string>
 </resources>

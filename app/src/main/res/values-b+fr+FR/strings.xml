@@ -33,7 +33,7 @@
     <string name="create_counter_label">Créer un comptoir</string>
     <string name="widget_receiver_label">Indicateur statique</string>
     <string name="show_notification_label">Montrer le notif</string>
-    <string name="delete_counter_label">Supprimer le compteur</string>
+    <string name="delete_counter_label">Supprimer le comptoir</string>
     <string name="counter_dialog_title">Choisis un comptoir</string>
     <string name="counter_dialog_positive">Choisir</string>
     <string name="counter_dialog_negative">Arrêter</string>
@@ -62,4 +62,5 @@
     <string name="invalid_input">Entrée non valide</string>
     <string name="exported_to">Exporté vers %s</string>
     <string name="exported_to_json">Exporté vers %s.json</string>
+     <string name="no_counter_available">Il n\'y a pas de compteurs</string>
 </resources>

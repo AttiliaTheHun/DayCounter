@@ -34,7 +34,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:padding="8dp"
-			android:text="The application is coded in Java using Sketchware Pro. It is meant to remind us every day of how short our lifes are. Source code is available at https://github.com/AttiliaTheHun/DayCounter. The icons are stolen from https://icons8.com."
+			android:text="The application is coded in Java using Sketchware Pro. It is meant to remind us daily of how short our lifes are. Source code is available at https://github.com/AttiliaTheHun/DayCounter. The icons are stolen from https://icons8.com."
 			android:textSize="12sp"
 			android:textColor="#000000" />
 		<TextView
@@ -44,7 +44,7 @@
 			android:layout_height="wrap_content"
 			android:padding="8dp"
 			android:gravity="center_horizontal"
-			android:text="version 2.0 Alpha - made by AttilaTheHun"
+			android:text="version 2.1 Alpha - made by AttilaTheHun"
 			android:textSize="12sp"
 			android:textColor="#000000" />
 		<TextView

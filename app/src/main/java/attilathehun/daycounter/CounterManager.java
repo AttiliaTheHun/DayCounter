@@ -225,8 +225,12 @@ public class CounterManager {
      */
     public void clearCounters() {
         Util.stopService(Util.getContext());
+      /*  for (Counter c : counters) {
+            c.removeNotification();
+        }*/
         this.counters.clear();
         save();
+        Util.refreshWidgets(Util.getContext());
         Util.log("Cleared the data");
     }
 
@@ -282,9 +286,8 @@ public class CounterManager {
      * Use cases: widget deleted, wanting to troll the user
      *
      * @param counterId target counter id
-     * @param widgetId  target widget id
      */
-    public void unbindWidget(String counterId, int widgetId) {
+    public void unbindWidget(String counterId) {
         for (int i = 0; i < counters.size(); i++) {
             if (counters.get(i).getId().equals(counterId)) {
                 counters.get(i).unbindWidget();

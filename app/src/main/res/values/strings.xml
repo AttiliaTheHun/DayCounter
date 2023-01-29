@@ -63,4 +63,5 @@
     <string name="invalid_input">Invalid input</string>
     <string name="exported_to">Exported to %s</string>
     <string name="exported_to_json">Exported to %s.json</string>
+    <string name="no_counter_available">No counters available</string>
 </resources>

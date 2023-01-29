@@ -8,7 +8,7 @@ I have been told that the code is a mess and it is hard to understand how it wor
 - Notification service displaying the amount of remaining days for any counter you choose
 - Homescreen widgets displaying the amount of remaining days for any counter you choose
 - Starts on boot
-- Supports complete translations (except for some error displaying and logging), currently available for 🇨🇿 Czech and partially 🇫🇷 French.
+- Supports complete translations (except for some error displaying and logging), currently available for 🇨🇿 Czech and 🇫🇷 French.
 ### Notes
 - The app is tested to work on Android 10 when the user uses the app as intended, there may be bugs and undesired features which I will appreciate in Issues (and won't ever fix)
 - The UI sucks

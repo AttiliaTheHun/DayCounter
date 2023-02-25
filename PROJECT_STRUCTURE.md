@@ -14,6 +14,7 @@
           └ 🗎CounterEventListener.java
           └ 🗎NotificationService.java
           └ 🗎DateChangedListener.java
+          └ 🗎LocaleChangedListener.java
           └ 🗎ServiceLauncher.java
           └ 🗎Util.java
           └ 🗎UriUtils.java
@@ -24,12 +25,17 @@
           └ 🗎MainActivity.java
           └ 🗎CreateCounterActivity.java
           └ 🗎SettingsActivity.java
+          └ 🗎FileUtil.java
+          └ 🗎DebugActivity.java
+          └ 🗎SketchApplication.java
+          └ 🗎SketchwareUtil.java
     └ 📁res 
       └ 📁layout
         └ 🗎main.xml
         └ 🗎create_counter.xml
         └ 🗎settings.xml
         └ 🗎about_dialog.xml
+        └ 🗎counter_dialog.xml
         └ 🗎counter_list_item.xml
         └ 🗎widget.xml
         └ 🗎widget_light.xml
@@ -37,14 +43,17 @@
         └ 🗎paths.xml
         └ 🗎widget_provider_info.xml
         └ 🗎widget_light_provider_info.xml
+        └ 🗎list_item_menu.xml
       └ 📁values
         └ 🗎colors.xml
         └ 🗎strings.xml
         └ 🗎styles.xml
       └ 📁values-b+cs+CZ
         └ 🗎strings.xml
+      └ 📁values-b+fr+FR
+        └ 🗎strings.xml
       └ 📁drawable-xhdpi
-        └ 🗎icon.png
+        └ 🗎app_icon.png
         └ 🗎delete_icon.png	
         └ 🗎ic_add_black.png		
 ```

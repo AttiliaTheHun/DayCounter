@@ -41,6 +41,10 @@ import androidx.core.*;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.DialogFragment;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import androidx.core.content.ContextCompat;
+import androidx.core.app.ActivityCompat;
 
 public class SettingsActivity extends AppCompatActivity {
 	
@@ -48,6 +52,8 @@ public class SettingsActivity extends AppCompatActivity {
 	private AppBarLayout _app_bar;
 	private CoordinatorLayout _coordinator;
 	private  static final int PICKFILE_RESULT_CODE = 8788;
+	private  final int REQUEST_CODE = 0;
+	private String action = "";
 	
 	private ArrayList<String> developer_options_list = new ArrayList<>();
 	private ArrayList<String> functional_options_list = new ArrayList<>();
@@ -100,16 +106,13 @@ public class SettingsActivity extends AppCompatActivity {
 				}
 				else {
 					if (_position == 1) {
-						if (CounterManager.getInstance().exportJSONDefault()) {
-							SketchwareUtil.showMessage(getApplicationContext(), String.format(getResources().getString(R.string.exported_to_json), CounterManager.DEFAULT_EXPORT_PATH));
-						}
+						action = "EXPORT_JSON";
+						_checkPermissions();
 					}
 					else {
 						if (_position == 2) {
-							Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-							chooseFile.setType("*/*");
-							chooseFile = Intent.createChooser(chooseFile, "Choose a file");
-							startActivityForResult(chooseFile, PICKFILE_RESULT_CODE);
+							action = "IMPORT_JSON";
+							_checkPermissions();
 						}
 						else {
 							
@@ -157,26 +160,23 @@ public class SettingsActivity extends AppCompatActivity {
 					}
 					else {
 						if (_position == 2) {
-							if (CounterManager.getInstance().exportBytesDefault()) {
-								SketchwareUtil.showMessage(getApplicationContext(), String.format(getResources().getString(R.string.exported_to), CounterManager.DEFAULT_EXPORT_PATH));
-								
-							}
+							action = "EXPORT_BYTES";
+							_checkPermissions();
 						}
 						else {
 							if (_position == 3) {
-								Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-								chooseFile.setType("*/*");
-								chooseFile = Intent.createChooser(chooseFile, "Choose a file");
-								startActivityForResult(chooseFile, PICKFILE_RESULT_CODE);
+								action = "IMPORT_BYTES";
+								_checkPermissions();
 							}
 							else {
 								if (_position == 4) {
-									Util.viewLog(getApplicationContext());
+									action = "VIEW_LOG";
+									_checkPermissions();
 								}
 								else {
 									if (_position == 5) {
-										Util.clearLog();
-										SketchwareUtil.showMessage(getApplicationContext(), "log cleared");
+										action = "CLEAR_LOG";
+										_checkPermissions();
 									}
 									else {
 										
@@ -230,7 +230,7 @@ public class SettingsActivity extends AppCompatActivity {
 	}
 	
 	private void initializeLogic() {
-		Util.setContextIfNull(this);
+		Util.setContextIfNull(getApplicationContext());
 		setTitle(getResources().getString(R.string.settings));
 		_initListsAndViews();
 		//private static final int CHOOSE_FILE_REQUESTCODE = 8777;
@@ -275,6 +275,7 @@ public class SettingsActivity extends AppCompatActivity {
 		super.onDestroy();
 		Util.clearContextIfEquals(this);
 	}
+	
 	public void _initListsAndViews() {
 		developer_options_list.add(getResources().getString(R.string.start_service));
 		developer_options_list.add(getResources().getString(R.string.refresh_widgets));
@@ -291,6 +292,91 @@ public class SettingsActivity extends AppCompatActivity {
 		((BaseAdapter)functional_options_view.getAdapter()).notifyDataSetChanged();
 		textview3.setText(getResources().getString(R.string.developer_settings));
 		textview1.setText(getResources().getString(R.string.functional_settings));
+	}
+	
+	
+	public void _onPermsResultSketchThingy() {
+	}
+	 @Override
+	public void onRequestPermissionsResult(int requestCode,
+	                                       
+	String[] permissions,
+	  
+	 int[] grantResults)
+	    {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+		if (requestCode == REQUEST_CODE) {
+			if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+				_checkPermissions();
+			} else {
+				SketchwareUtil.showMessage(getApplicationContext(), getString(R.string.storage_permission_required));
+			}
+		}
+		
+		
+		
+		
+		
+		
+		
+	}
+	
+	
+	public void _checkPermissions() {
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED
+				|| ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+			ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
+		} else {
+			if (action.equals("IMPORT_JSON")) {
+				Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
+				chooseFile.setType("*/*");
+				chooseFile = Intent.createChooser(chooseFile, "Choose a file");
+				startActivityForResult(chooseFile, PICKFILE_RESULT_CODE);
+			}
+			else {
+				if (action.equals("EXPORT_JSON")) {
+					if (CounterManager.getInstance().exportJSONDefault()) {
+						SketchwareUtil.showMessage(getApplicationContext(), String.format(getResources().getString(R.string.exported_to_json), CounterManager.DEFAULT_EXPORT_PATH));
+					}
+				}
+				else {
+					if (action.equals("IMPORT_BYTES")) {
+						Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
+						chooseFile.setType("*/*");
+						chooseFile = Intent.createChooser(chooseFile, "Choose a file");
+						startActivityForResult(chooseFile, PICKFILE_RESULT_CODE);
+					}
+					else {
+						if (action.equals("EXPORT_BYTES")) {
+							if (CounterManager.getInstance().exportBytesDefault()) {
+								SketchwareUtil.showMessage(getApplicationContext(), String.format(getResources().getString(R.string.exported_to), CounterManager.DEFAULT_EXPORT_PATH));
+							}
+						}
+						else {
+							if (action.equals("VIEW_LOG")) {
+								if (!Util.DEBUG) {
+									SketchwareUtil.showMessage(getApplicationContext(), "DEBUG mode only ");
+									return;
+								}
+								Util.viewLog(getApplicationContext());
+							}
+							else {
+								if (action.equals("CLEAR_LOG")) {
+									if (!Util.DEBUG) {
+										SketchwareUtil.showMessage(getApplicationContext(), "DEBUG mode only ");
+										return;
+									}
+									Util.clearLog(getApplicationContext());
+								}
+								else {
+									
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 	
 }

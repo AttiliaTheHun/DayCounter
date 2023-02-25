@@ -21,7 +21,7 @@ import attilathehun.daycounter.Counter;
 import attilathehun.daycounter.CounterManager;
 
 /**
- * This is the light widget configuration activity, that gets open when you create a light widget.
+ * This is the light widget configuration activity, that gets open when you create or tap a light widget.
  */
 public class WidgetLightActivity extends Activity {
 
@@ -39,7 +39,6 @@ public class WidgetLightActivity extends Activity {
         final Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         final int mAppWidgetId;
-        Util.log(intent.getStringExtra("created"));
         if (extras != null) {
             mAppWidgetId = extras.getInt(
                     AppWidgetManager.EXTRA_APPWIDGET_ID,
@@ -73,9 +72,7 @@ public class WidgetLightActivity extends Activity {
         builder.setPositiveButton(getResources().getString(R.string.counter_dialog_positive), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface _dialog, int _which) {
-                if (!Boolean.parseBoolean(intent.getStringExtra("created"))) {
-                    CounterManager.getInstance().unbindWidgetOfId(mAppWidgetId);
-                }
+                CounterManager.getInstance().unbindWidgetOfId(mAppWidgetId);
                 CounterManager.getInstance().bindWidget(String.valueOf(rgroup.getCheckedRadioButtonId()), mAppWidgetId);
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(WidgetLightActivity.this);
                 //Update the App Widget with a RemoteViews layout by calling updateAppWidget(int, RemoteViews):

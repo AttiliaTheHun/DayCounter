@@ -9,8 +9,6 @@
     <string name="service_description">Ce truc permet de s\'assurer que les notifications s\'affichent et sont mises à jour.</string>
     <string name="notification_channel_name">Nombre de jours restants</string>
     <string name="notification_channel_description">Affiche le nombre de jours restants</string>
-    <string name="service_notification_channel_name">Désactivez cette notification pour votre propre bien</string>
-    <string name="service_notification_channel_description">Une notification obligatoire pour le service, désolé</string>
     <string name="default_notification_name">Le temps est en cours</string>
     <string name="january">Janvier</string>
     <string name="february">Février </string>
@@ -25,7 +23,7 @@
     <string name="november">Novembre</string>
     <string name="december">Decembre</string>
     <string name="counter_name_label">Nom du comptoir</string>
-    <string name="counter_name_hint">Jusqu\'à je suis 60</string>
+    <string name="counter_name_hint">Jusqu\'à je suis 65</string>
     <string name="birth_date_label">Date de naissance</string>
     <string name="birth_date_year_label">Année</string>
     <string name="highest_estimated_age_label">Âge estimé le plus élevé</string>
@@ -62,5 +60,14 @@
     <string name="invalid_input">Entrée non valide</string>
     <string name="exported_to">Exporté vers %s</string>
     <string name="exported_to_json">Exporté vers %s.json</string>
-     <string name="no_counter_available">Il n\'y a pas de compteurs</string>
+    <string name="no_counter_available">Il n\'y a pas de compteurs</string>
+    <string name="close_dialog">Fermer</string>
+    <string name="list_item_menu_edit">Modifier (renommer)</string>
+    <string name="list_item_menu_duplicate">Dupliquer</string>
+    <string name="list_item_menu_delete">Effacer</string>
+    <string name="edit_counter_label">Modifier le comptoir</string>
+    <string name="about_dialog_application_description">L\'application est codée à l\'aide de l\'IDE Sketchware Pro dans le langage de programmation Java. Elle a pour but de nous rappeler au quotidien combien nos vies sont courtes. Le code source est disponible à l\'adresse https://github.com/AttiliaTheHun/DayCounter. Les icônes sont volées à https://icons8.com. </string>
+    <string name="about_dialog_version_description">Version 2.2 réalisée par AttilaTheHun</string>
+     <string name="storage_permission_required">Autorisation de stockage nécessaire </string>
+    <string name="permission_granted">Autorisation accordé</string>
 </resources>

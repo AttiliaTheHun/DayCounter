@@ -24,12 +24,13 @@ import attilathehun.daycounter.Counter;
 import attilathehun.daycounter.CounterManager;
 import attilathehun.daycounter.DateChangedListener;
 import attilathehun.daycounter.CounterEventListener;
+import attilathehun.daycounter.LocaleChangedListener;
 import attilathehun.daycounter.ServiceLauncher;
 
 /**
  * This class governs the notification service.
  */
-public class NotificationService extends Service implements DateChangedListener, CounterEventListener {
+public class NotificationService extends Service implements DateChangedListener, CounterEventListener, LocaleChangedListener {
 
     private static boolean isRunning = false;
     private static boolean isRegistred = false;
@@ -47,6 +48,9 @@ public class NotificationService extends Service implements DateChangedListener,
         super.onCreate();
     }
 
+    /**
+     * Stops the service and cleans all its records so it can be restarted later from clean state.
+     */
     public void cleanup() {
         Util.log("Service cleanup");
         NotificationService.setRunning(false);
@@ -69,7 +73,8 @@ public class NotificationService extends Service implements DateChangedListener,
      * A compulsory method for Services we do not use.
      *
      * @param intent the intent
-     * @return RuntimeException
+     * @throws RuntimeException every time
+     * @return never gets there
      */
     @Override
     public IBinder onBind(Intent intent) {
@@ -104,7 +109,7 @@ public class NotificationService extends Service implements DateChangedListener,
      * Should be called when the date changes to update the notifications. DateChangedListener#onDateChanged().
      */
     @Override
-    public void onDateChanged() {
+    public void onDateChanged(Context context) {
         this.refreshNotifications();
     }
 
@@ -121,6 +126,7 @@ public class NotificationService extends Service implements DateChangedListener,
             if (Integer.parseInt(counter.getId()) == SERVICE_NOTIFICATION_COUNTER_ID) {
                 return;
             }
+            Util.log("Notification stated id - " + counter.getId());
             this.createNotification(counter);
         } else {
             if (Integer.parseInt(counter.getId()) == SERVICE_NOTIFICATION_COUNTER_ID) {
@@ -134,14 +140,35 @@ public class NotificationService extends Service implements DateChangedListener,
     }
 
     /**
-     * Removes notification from the target counter.
+     * Removes the notification of the target counter.
      *
      * @param counter said counter represantation, NOT reference!
      */
     @Override
     public void onCounterRemoved(Counter counter) {
         counter.removeNotification();
-        //onCounterNotificationStateChanged(counter);
+    }
+
+    /**
+     * Refreshes all the notifications. It would be more resource thrifty to refresh only the one, but I was lazy. Feel free to make a PR :)
+     *
+     * @param counter said counter represantation, NOT reference!
+     */
+    @Override
+    public void onCounterEdited(Counter counter) {
+        if (counter.hasNotification()) {
+            this.refreshNotifications();
+        }
+    }
+
+    /**
+     * Refreshes all the notifications. It would be more resource thrifty to refresh only the one, but I was lazy. Feel free to make a PR :)
+     *
+     * @param counter said counter represantation, NOT reference!
+     */
+    @Override
+    public void onLocaleChanged(Context context) {
+        this.refreshNotifications();
     }
 
     private static void setRunning(boolean state) {
@@ -213,7 +240,7 @@ public class NotificationService extends Service implements DateChangedListener,
      */
     private void registerReceiver() {
         if (NotificationService.isRegistred()) {
-            Util.log("Prevented creating another receiver");
+            // Util.log("Prevented creating another receiver");
             return;
         }
         IntentFilter intentFilter = new IntentFilter();
@@ -238,15 +265,16 @@ public class NotificationService extends Service implements DateChangedListener,
     }
 
     /**
-     * Registers <i>this</i> as a DateChangedListener and CounterEventListener to the appropriate classes. Necessary for event interception.
+     * Registers <i>this</i> as a DateChangedListener, LocaleChangedListener and CounterEventListener to the appropriate classes. Necessary for event interception.
      */
     private void registerListener() {
         if (NotificationService.isListening()) {
-            Util.log("Prevented creating another listener");
+            // Util.log("Prevented creating another listener");
             return;
         }
         NotificationService.setListening(true);
-        ServiceLauncher.addListener(this);
+        ServiceLauncher.addDateChangedListener(this);
+        ServiceLauncher.addLocaleChangedListener(this);
         Counter.addEventListener(this);
     }
 
@@ -264,7 +292,7 @@ public class NotificationService extends Service implements DateChangedListener,
      * @param counter counter representation, NOT reference!
      */
     private void createNotification(Counter counter) {
-        Util.log("Notification created id - " + counter.getId());
+        //Util.log("Notification created id - " + counter.getId());
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.notify(Integer.parseInt(counter.getId()), buildNotification(counter));
     }
@@ -291,7 +319,7 @@ public class NotificationService extends Service implements DateChangedListener,
     }
 
     /**
-     * Update the content of all running notifications.
+     * Update the content of all ongoing notifications.
      */
     public void refreshNotifications() {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
@@ -306,6 +334,7 @@ public class NotificationService extends Service implements DateChangedListener,
             }
         }
     }
+
 
     /**
      * A serious name would be removeNotification(), but compared to this method the influence of social media
@@ -333,6 +362,7 @@ public class NotificationService extends Service implements DateChangedListener,
             notificationManager.notify(SERVICE_NOTIFICATION_ID, buildNotification(counter));
         }
     }
+
 
     private static void setServiceNotificationCounterId(int id) {
         NotificationService.SERVICE_NOTIFICATION_COUNTER_ID = id;

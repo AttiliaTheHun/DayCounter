@@ -39,11 +39,18 @@ import android.net.Uri;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.view.View;
+import android.widget.AdapterView;
 import com.google.gson.Gson;
 import androidx.core.*;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.DialogFragment;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import androidx.core.content.ContextCompat;
+import androidx.core.app.ActivityCompat;
+import android.widget.PopupMenu;
+import android.view.MenuItem;
 import attilathehun.daycounter.Util;
 import attilathehun.daycounter.Counter;
 import attilathehun.daycounter.CounterManager;
@@ -57,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
 	private String useless = "";
 	private  static List<CounterEventListener> listeners = new ArrayList<CounterEventListener>();
 	private HashMap<String, Object> dhdh = new HashMap<>();
+	private  Counter temp = Counter.emptyCounter();
+	private  final int REQUEST_CODE = 0;
 	
 	private ArrayList<HashMap<String, Object>> counters = new ArrayList<>();
 	
@@ -93,6 +102,80 @@ public class MainActivity extends AppCompatActivity {
 		listview1 = findViewById(R.id.listview1);
 		d = new AlertDialog.Builder(this);
 		
+		listview1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> _param1, View _param2, int _param3, long _param4) {
+				final int _position = _param3;
+				final AlertDialog counterDialog = new AlertDialog.Builder(MainActivity.this).create();
+				View inflate = getLayoutInflater().inflate(R.layout.counter_dialog, null);
+				counterDialog.setView(inflate);
+				TextView close_view = (TextView) inflate.findViewById(R.id.close_view);
+				close_view.setText(getResources().getString(R.string.close_dialog));
+				TextView textview1 = (TextView) inflate.findViewById(R.id.textview1);
+				textview1.setText(Util.getDaysRemaining(CounterManager.getInstance().getCounters().get(_position), getApplicationContext()));
+				close_view.setOnClickListener(new OnClickListener() { 
+					public void onClick(View view) { counterDialog.dismiss();
+						 } 
+				});
+				counterDialog.show();
+				
+			}
+		});
+		
+		listview1.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> _param1, View _param2, int _param3, long _param4) {
+				final int _position = _param3;
+				View view = listview1.getChildAt(_position - listview1.getFirstVisiblePosition());
+				Util.log(view.toString());
+				PopupMenu popupMenu = new PopupMenu(MainActivity.this, view);
+				popupMenu.getMenuInflater().inflate(R.xml.list_item_menu, popupMenu.getMenu());
+				popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+					 @Override
+					public boolean onMenuItemClick(MenuItem menuItem) {
+						final int id = menuItem.getItemId();
+						
+						switch(id) {
+							case R.id.edit:
+							temp = CounterManager.getInstance().getCounters().get(_position);
+							if (temp == null || temp.isEmpty()) {
+								throw new IllegalArgumentException("The counter cannot be null");
+							}
+							intent.putExtra("edit", "true");
+							intent.putExtra("id", temp.getId());
+							intent.putExtra("name", temp.getName());
+							intent.putExtra("targetDay", temp.getDay());
+							intent.putExtra("targetMonth", temp.getMonth());
+							intent.putExtra("targetYear", temp.getYear() - temp.getTargetAge());
+							intent.putExtra("targetAge", temp.getTargetAge());
+							intent.putExtra("position", _position);
+							intent.setClass(getApplicationContext(), CreateCounterActivity.class);
+							temp = null;
+							startActivity(intent);
+							break;
+							case R.id.duplicate:
+							temp = CounterManager.getInstance().getCounters().get(_position);
+							CounterManager.getInstance().duplicate(temp);
+							temp = null;
+							_refresh();
+							break;
+							case R.id.delete:
+							String counterId = counters.get(_position).get("id").toString();
+							CounterManager.getInstance().deleteCounter(counterId);
+							_refresh();
+							
+							break;
+						}
+						return true;
+					}
+				});
+				
+				popupMenu.show();
+				
+				return true;
+			}
+		});
+		
 		_fab.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View _view) {
@@ -107,12 +190,18 @@ public class MainActivity extends AppCompatActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 		_init();
 		
+		if (Util.DEBUG) {
+			_checkPermissions();
+		}
 		if (!CounterManager.getInstance().counterExists() && !(getIntent().getStringExtra("ABORTED") != null && getIntent().getStringExtra("ABORTED").equals("true"))) {
 			intent.setClass(getApplicationContext(), CreateCounterActivity.class);
 			startActivity(intent);
 			finish();
 		}
 		
+		if (counters.size() > 0) {
+			listview1.smoothScrollToPosition((int)(getIntent().getIntExtra("position", 0) ));
+		}
 	}
 	
 	
@@ -134,9 +223,13 @@ public class MainActivity extends AppCompatActivity {
 			aboutdialog.setView(inflate);
 			TextView close_view = (TextView) inflate.findViewById(R.id.close_view);
 			TextView textview2 = (TextView) inflate.findViewById(R.id.textview2);
+			TextView textview3 = (TextView) inflate.findViewById(R.id.textview3);
+			textview2.setText(getString(R.string.about_dialog_application_description)); 
 			android.text.util.Linkify.addLinks(textview2, android.text.util.Linkify.ALL);
 			textview2.setLinkTextColor(Color.parseColor("#CDDC39"));
 			textview2.setLinksClickable(true);
+			textview3.setText(getString(R.string.about_dialog_version_description));
+			close_view.setText(getString(R.string.close_dialog));
 			close_view.setOnClickListener(new OnClickListener() { 
 				public void onClick(View view) { 
 					aboutdialog.dismiss();
@@ -165,6 +258,10 @@ public class MainActivity extends AppCompatActivity {
 		Util.clearContextIfEquals(this);
 	}
 	public void _init() {
+		if (Util.DEBUG && true) {
+			
+			
+		}
 		// Force Sketchware to include the Gson library
 		useless = new Gson().toJson(counters);
 		Util.setContextIfNull(getApplicationContext());
@@ -172,9 +269,32 @@ public class MainActivity extends AppCompatActivity {
 		Util.registerProviders();
 		_refresh();
 	}
+	public void _checkPermissions() {
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED
+				|| ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+			ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
+		}
+	}
+	 @Override
+	public void onRequestPermissionsResult(int requestCode,
+	                                       
+	String[] permissions,
+	  
+	 int[] grantResults)
+	    {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+		if (requestCode == REQUEST_CODE) {
+			if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+				SketchwareUtil.showMessage(getApplicationContext(), getString(R.string.permission_granted));
+			} else {
+				SketchwareUtil.showMessage(getApplicationContext(), getString(R.string.storage_permission_required));
+			}
+		}
+	}
 	
 	
 	public void _refresh() {
+		Util.setContextIfNull(getApplicationContext());
 		counters = CounterManager.getInstance().getCountersData();
 		listview1.setAdapter(new Listview1Adapter(counters));
 		((BaseAdapter)listview1.getAdapter()).notifyDataSetChanged();

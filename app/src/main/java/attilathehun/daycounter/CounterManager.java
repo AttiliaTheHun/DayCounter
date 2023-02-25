@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
 import java.io.FileNotFoundException;
+import java.io.ObjectStreamException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -16,15 +17,17 @@ import com.google.gson.reflect.TypeToken;
 
 import attilathehun.daycounter.Util;
 import attilathehun.daycounter.Counter;
+import attilathehun.daycounter.CounterEventListener;
 
 /**
- * This class manages a collection of the Counter objects, that represent the actual counters. It is the central class through all manipulation of the
+ * This class manages a collection of the Counter objects, that represent the actual counters. It is the central class through all access or manipulation to/of the
  * counters data is done.
  */
 public class CounterManager {
 
     public static final String DEFAULT_EXPORT_PATH = "/storage/emulated/0/counters";
-    public static String SAVE_FILE_PATH = Util.getContext().getFilesDir() + "/data";
+    public static final String SAVE_FILE_PATH = Util.getContext().getFilesDir() + "/data";
+    public static final boolean AUTOMATIC_BACKUP = Util.DEBUG;
 
     private static CounterManager instance = new CounterManager();
     private ArrayList<Counter> counters = new ArrayList<Counter>();
@@ -43,6 +46,11 @@ public class CounterManager {
         return instance;
     }
 
+    /**
+     * Sends the CounterEventListener#onCounterRemoved() event to all registered listeners.
+     *
+     * @param counter the removed counter data
+     */
     private static void notifyCounterRemoved(Counter counter) {
         counter.inject(Util.getContext());
         for (CounterEventListener listener : Counter.getEventListeners()) {
@@ -59,7 +67,7 @@ public class CounterManager {
      * @param targetMonth Counter target month
      * @param targetYear  Counter target year
      * @param targetAge   Counter target age
-     * @return true if successful, false if no counter has been created
+     * @return true if successful, false if counter has not been created
      */
     //TODO: validate input, check for impossible dates
     public boolean addCounter(String name, int targetDay, int targetMonth, int targetYear, int targetAge) {
@@ -101,6 +109,7 @@ public class CounterManager {
      */
     public void save() {
         try {
+            Util.log(new Gson().toJson(counters));
             File dataFile = new File(SAVE_FILE_PATH);
             dataFile.createNewFile();
             FileOutputStream dataFileOutputStream = new FileOutputStream(dataFile, false);
@@ -109,8 +118,11 @@ public class CounterManager {
             objectOutputStream.close();
             dataFileOutputStream.close();
             Util.log("Saved the data");
+            if (counters.size() != 0) {
+                this.backup();
+            }
         } catch (Exception e) {
-            Util.log("Can not save the data: " + e.getMessage());
+            Util.log("Can not save the data: " + e.toString());
         }
     }
 
@@ -133,8 +145,13 @@ public class CounterManager {
             Util.log("Loaded list of size " + counters.size());
             //Util.log(new Gson().toJson(counters));
 
+            //A safeguard to prevent data loss when updating (DEBUG mode only)
+        } catch (ObjectStreamException o) {
+            Util.log(o.getMessage());
+            this.restore();
+            Util.log("Restored list of size " + counters.size());
         } catch (Exception e) {
-            Util.log(e.getMessage());
+            Util.log(e.toString());
             return;
         }
     }
@@ -158,7 +175,7 @@ public class CounterManager {
     }
 
     /**
-     * Returns true if there is a Counter in the collection and false if there is not.
+     * Checks if at least one counter exists.
      *
      * @return true if at least one counter exists, false otherwise
      */
@@ -167,7 +184,7 @@ public class CounterManager {
     }
 
     /**
-     * Returns a list of those counters that are meant to have active notification.
+     * Returns a list of those counters that are meant to have an active notification.
      *
      * @return a list of counters with notification
      */
@@ -221,7 +238,7 @@ public class CounterManager {
     }
 
     /**
-     * Wipes the counter collection.
+     * Wipes the counter collection. Stops the notification service and updates all widgets.
      */
     public void clearCounters() {
         Util.stopService(Util.getContext());
@@ -231,6 +248,7 @@ public class CounterManager {
         this.counters.clear();
         save();
         Util.refreshWidgets(Util.getContext());
+        //Util.getContext().stopService(new Intent(Util.getContext(), NotificationService.class));
         Util.log("Cleared the data");
     }
 
@@ -283,7 +301,7 @@ public class CounterManager {
 
     /**
      * Unbinds a physical homescreen widget from a counter.
-     * Use cases: widget deleted, wanting to troll the user
+     * Use cases: widget deleted, widget rebound, wanting to troll the user
      *
      * @param counterId target counter id
      */
@@ -328,8 +346,18 @@ public class CounterManager {
         return null;
     }
 
+    /**
+     * Saves the serialized counter collection into a file at the specified path.
+     *
+     * @param path path of the export file
+     * @return true if successful
+     */
     public boolean exportBytes(String path) {
         try {
+            if (counters.size() == 0) {
+                SketchwareUtil.showMessage(Util.getContext(), Util.getContext().getString(R.string.no_counter_available));
+                return false;
+            }
             File dataFile = new File(SAVE_FILE_PATH);
             File exportFile = new File(path);
             exportFile.createNewFile();
@@ -344,18 +372,33 @@ public class CounterManager {
             return true;
         } catch (Exception e) {
             SketchwareUtil.showMessage(Util.getContext(), e.getMessage());
-            Util.log(e.getMessage());
+            Util.log(e.toString());
             return false;
         }
 
     }
 
+    /**
+     * Saves the serialized counter collection into a file at the default path.
+     *
+     * @return true if success
+     */
     public boolean exportBytesDefault() {
         return exportBytes(DEFAULT_EXPORT_PATH);
     }
 
+    /**
+     * Saves the counter collection into a file at the specified path in JSON format.
+     *
+     * @param path path of the export file
+     * @return true if successful
+     */
     public boolean exportJSON(String path) {
         try {
+            if (counters.size() == 0) {
+                SketchwareUtil.showMessage(Util.getContext(), Util.getContext().getString(R.string.no_counter_available));
+                return false;
+            }
             final String jsonData = new Gson().toJson(counters);
             File exportFile = new File(path);
             exportFile.createNewFile();
@@ -366,15 +409,26 @@ public class CounterManager {
             return true;
         } catch (Exception e) {
             SketchwareUtil.showMessage(Util.getContext(), e.getMessage());
-            Util.log(e.getMessage());
+            Util.log(e.toString());
             return false;
         }
     }
 
+    /**
+     * Saves the counter collection into a file at the defaultpath in JSON format.
+     *
+     * @return true if successful
+     */
     public boolean exportJSONDefault() {
         return exportJSON(DEFAULT_EXPORT_PATH + ".json");
     }
 
+    /**
+     * Loads the serialized counter collection from a file at the specified path.
+     *
+     * @param path path of the import file
+     * @return true if successful
+     */
     public boolean importBytes(String path) {
         try {
             File file = new File(path);
@@ -392,11 +446,17 @@ public class CounterManager {
             return true;
         } catch (Exception e) {
             SketchwareUtil.showMessage(Util.getContext(), e.getMessage());
-            Util.log(e.getMessage());
+            Util.log(e.toString());
             return false;
         }
     }
 
+    /**
+     * Loads the counter collection from a file at the specified path in JSON format.
+     *
+     * @param path path of the import file
+     * @return true if successful
+     */
     public boolean importJSON(String path) {
         try {
             File importFile = new File(path);
@@ -412,8 +472,61 @@ public class CounterManager {
             return true;
         } catch (Exception e) {
             SketchwareUtil.showMessage(Util.getContext(), e.getMessage());
-            Util.log(e.getMessage());
+            Util.log(e.toString());
             return false;
+        }
+    }
+
+    /**
+     * Creates a new counter with identical user-given data.
+     *
+     * @param counter source counter data
+     */
+    public void duplicate(Counter counter) {
+        this.addCounter(counter.getName(), counter.getDay(), counter.getMonth(), counter.getYear(), counter.getTargetAge());
+        Util.log("Counter duplicated originalId - " + counter.getId() + " newId - " + this.counters.get(this.counters.size() - 1).getId());
+    }
+
+    /**
+     * Modifies a counter's user-given data. Counter is represented as the data.
+     *
+     * @param id          id of the counter
+     * @param name        new display name of the Counter
+     * @param targetDay   new Counter target day
+     * @param targetMonth new Counter target month
+     * @param targetYear  new Counter target year
+     * @param targetAge   new Counter target age
+     * @return true if successful
+     */
+    public boolean editCounter(String id, String name, int targetDay, int targetMonth, int targetYear, int targetAge) {
+        for (int i = 0; i < counters.size(); i++) {
+            if (counters.get(i).getId().equals(id)) {
+                final boolean result = counters.get(i).edit(Util.getContext(), name, targetDay, targetMonth, targetYear, targetAge);
+                if (result) {
+                    save();
+                }
+                return result;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Creates a side save file in the apps private storage in the JSON format that can be loaded when the Counter class has been updated to prevent
+     * data loss. (DEBUG mode only)
+     */
+    private void backup() {
+        if (AUTOMATIC_BACKUP) {
+            this.exportJSON(CounterManager.SAVE_FILE_PATH + ".json");
+        }
+    }
+
+    /**
+     * Restores the side save file in the apps private storage in the JSON format. (DEBUG mode only)
+     */
+    private void restore() {
+        if (AUTOMATIC_BACKUP) {
+            this.importJSON(CounterManager.SAVE_FILE_PATH + ".json");
         }
     }
 

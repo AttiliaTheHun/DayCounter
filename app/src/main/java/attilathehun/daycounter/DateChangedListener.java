@@ -1,8 +1,17 @@
 package attilathehun.daycounter;
- 
+
+import androidx.annotation.NonNull;
+
+import android.content.Context;
+
 /**
-* Communication channel between classes that are aware of date changing and classes that need to be aware of date changing.
-*/
+ * Provides a communication channel to entities that need to be notified when date changes.
+ */
 public interface DateChangedListener {
-        public void onDateChanged();
+    /**
+     * Guess what?
+     *
+     * @param context the context (not null)
+     */
+    public void onDateChanged(@NonNull Context context);
 }

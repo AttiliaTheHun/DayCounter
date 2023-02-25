@@ -14,25 +14,34 @@ import attilathehun.daycounter.Util;
 import attilathehun.daycounter.Counter;
 import attilathehun.daycounter.CounterManager;
 import attilathehun.daycounter.CounterEventListener;
+import attilathehun.daycounter.DateChangedListener;
+import attilathehun.daycounter.LocaleChangedListener;
 
 /**
- * This class manages the behavior of our light launcher widget(s).
+ * This class manages the behavior of our light launcher windget(s).
  */
-public class WidgetLightProvider extends AppWidgetProvider implements CounterEventListener {
+public class WidgetLightProvider extends AppWidgetProvider implements CounterEventListener, DateChangedListener, LocaleChangedListener {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        //Util.log("WidgetProvider.onUpdate()");
+        //Util.log("WidgetLightProvider.onUpdate()");
         final int N = appWidgetIds.length;
         for (int i = 0; i < N; i++) {
-            // Util.log("Light: " + Arrays.toString(appWidgetIds));
+            Util.log("Light: " + Arrays.toString(appWidgetIds));
             int appWidgetId = appWidgetIds[i];
             updateAppWidget(context, appWidgetManager, appWidgetId);
         }
     }
 
+    /**
+     * When a widget gets removed from the homescreen. Unbinds the widget.
+     *
+     * @param context      context
+     * @param appWidgetIds removed widgets ids
+     */
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
+        Util.setContextIfNull(context.getApplicationContext());
         for (int appWidgetId : appWidgetIds) {
             CounterManager.getInstance().unbindWidgetOfId(appWidgetId);
         }
@@ -53,8 +62,40 @@ public class WidgetLightProvider extends AppWidgetProvider implements CounterEve
 
     }
 
+    /**
+     * When a counter is destroyed. Resets the widget.
+     *
+     * @param counter deleted counter
+     */
     @Override
     public void onCounterRemoved(Counter counter) {
+        if (!counter.hasWidget()) {
+            return;
+        }
+        Context context = counter.withdraw();
+        AppWidgetManager manager = AppWidgetManager.getInstance(context.getApplicationContext());
+        int[] ids = manager.getAppWidgetIds(new ComponentName(context.getApplicationContext(), WidgetLightProvider.class));
+        boolean belongs = false;
+        for (int id : ids) {
+            if (id == counter.getWidgetId()) {
+                belongs = true;
+                break;
+            }
+        }
+        // Otherwise the widget would get update in the wrong theme (light in this case))
+        if (!belongs) {
+            return;
+        }
+        this.updateAppWidget(context, manager, counter.getWidgetId());
+    }
+
+    /**
+     * When a counter is edited. Refreshes the widget.
+     *
+     * @param counter edited counter
+     */
+    @Override
+    public void onCounterEdited(Counter counter) {
         if (!counter.hasWidget()) {
             return;
         }
@@ -71,27 +112,32 @@ public class WidgetLightProvider extends AppWidgetProvider implements CounterEve
         if (!belongs) {
             return;
         }
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_light);
-        Util.setContextIfNull(context.getApplicationContext());
-        views.setTextViewText(R.id.name_indicator, context.getResources().getString(R.string.counter_removed));
-        views.setTextViewText(R.id.days_indicator, String.format(context.getResources().getString(R.string.days_left), "N/A"));
-        manager.updateAppWidget(counter.getWidgetId(), views);
+        this.updateAppWidget(context, manager, counter.getWidgetId());
+    }
+
+    @Override
+    public void onDateChanged(Context context) {
+        WidgetLightProvider.refresh(context);
+    }
+
+    @Override
+    public void onLocaleChanged(Context context) {
+        WidgetLightProvider.refresh(context);
     }
 
     /**
      * Updates the text on the widget's TextView to match the current day count.
      *
-     * @param context a context for emergency purposes
-     * @ appWindgetManager target widget manager
-     * @ appWidgetId target widget id
+     * @param context           a context for emergency purposes
+     * @param appWindgetManager target widget manager
+     * @param appWidgetId       target widget id
      */
     void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_light);
         Util.setContextIfNull(context.getApplicationContext());
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_light);
         Counter counter = CounterManager.getInstance().getWidgetCounterForId(appWidgetId);
         Intent intent = new Intent(context, WidgetLightActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra("created", "false");
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         views.setOnClickPendingIntent(R.id.linear1, pendingIntent);
@@ -112,18 +158,22 @@ public class WidgetLightProvider extends AppWidgetProvider implements CounterEve
     }
 
     /**
-     * Manually refreshes the widgets, for the cases when you delete a counter, its widget should no longer display the data.
+     * Manually refreshes the widgets.
      */
     public static void refresh(Context context) {
+        Util.setContextIfNull(context.getApplicationContext());
         // last resort
         int[] ids = AppWidgetManager.getInstance(context.getApplicationContext()).getAppWidgetIds(new ComponentName(context.getApplicationContext(), WidgetLightProvider.class));
-        // Util.log("Widget ids: " + Arrays.toString(ids));
+        Util.log("Light widget ids: " + Arrays.toString(ids));
         WidgetLightProvider myWidget = new WidgetLightProvider();
         myWidget.onUpdate(context, AppWidgetManager.getInstance(context), ids);
     }
 
     public static void registerListener() {
-        Counter.addEventListener(new WidgetLightProvider());
+        final WidgetLightProvider instance = new WidgetLightProvider();
+        Counter.addEventListener(instance);
+        ServiceLauncher.addDateChangedListener(instance);
+        ServiceLauncher.addLocaleChangedListener(instance);
     }
 
 }

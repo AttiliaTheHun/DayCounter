@@ -23,13 +23,14 @@ import attilathehun.daycounter.WidgetProvider;
 import attilathehun.daycounter.WidgetLightProvider;
 
 /**
- * A collection of handy methods to simplify tasks in other classes.
+ * A collection of handy methods to simplify tasks in other classes. Also providing with a simple logging mechanism.
  */
 public class Util {
 
     public static final boolean DEBUG = false;
     private static Context context = null;
     private static boolean PROVIDERS_REGISTERED = false;
+
 
     /**
      * @return stringified path of the log file
@@ -39,22 +40,23 @@ public class Util {
     }
 
     /**
-     * Logs a String to the end of the log file. Works only in debug mode.
+     * Logs a String to the end of the log file. Works only in DEBUG mode.
      */
     public static void log(String message) {
         if (DEBUG) {
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
             LocalDateTime now = LocalDateTime.now();
-            appendFile(getLogPath(), "[" + dtf.format(now) + "] " + message + "\n");
+            appendFile(getLogPath(), "[" + dtf.format(now) + "]" + message + "\n");
         }
     }
 
     /**
-     * Empties the log file. Works only in debug mode.
+     * Empties the log file. Works only in DEBUG mode.
      */
-    public static void clearLog() {
+    public static void clearLog(Context context) {
         if (DEBUG) {
             FileUtil.writeFile(Util.getLogPath(), "");
+            SketchwareUtil.showMessage(context, "log cleared");
         }
     }
 
@@ -66,10 +68,10 @@ public class Util {
      */
     public static void viewLog(Context context) {
         try {
-            String authority = "attilathehun.daycounter.fileprovider";
+            final String AUTHORITY = "attilathehun.daycounter.fileprovider";
             Intent intent = new Intent();
             File logFile = new File(Util.getLogPath());
-            Uri uri = FileProvider.getUriForFile(context, authority, logFile);
+            Uri uri = FileProvider.getUriForFile(context, AUTHORITY, logFile);
             intent.setAction(Intent.ACTION_VIEW);
             intent.setDataAndType(uri, "text/plain");
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -147,7 +149,7 @@ public class Util {
      */
     public static Context getContext() {
         if (Util.context == null) {
-            throw new RuntimeException("The default context is null.");
+            throw new NullPointerException("The default context is null.");
         }
         return Util.context;
     }
@@ -214,7 +216,7 @@ public class Util {
      * A wrapper over Counter#getDaysRemaining() that supports translations.
      */
     public static String getDaysRemaining(Counter counter, Context context) {
-        String daysLeft = String.format("%,d\n", counter.getDaysRemaining());
+        String daysLeft = String.format("%,d", counter.getDaysRemaining());
         String output = context.getResources().getString(R.string.days_left);
         return String.format(output, daysLeft);
     }
@@ -231,21 +233,29 @@ public class Util {
         WidgetLightProvider.refresh(context);
     }
 
-    public static String getString(int id, Context context) {
-        return context.getResources().getString(id);
-    }
-
+    /**
+     * Stops the notification service.
+     *
+     * @param context context
+     */
     public static void stopService(Context context) {
         Intent intent = new Intent(context, NotificationService.class);
         intent.setAction("ACTION_STOP_FOREGROUND_SERVICE");
         context.stopService(intent);
     }
 
+    /**
+     * Stops and then starts the notification service, to effectively redo all the notifications.
+     * @param context
+     */
     public static void restartService(Context context) {
         Util.stopService(context);
         Util.startService(context);
     }
 
+    /**
+     * Registers widget providers as event receivers.
+     */
     public static void registerProviders() {
         if (Util.PROVIDERS_REGISTERED) {
             return;

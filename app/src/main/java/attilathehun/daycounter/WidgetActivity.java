@@ -21,14 +21,14 @@ import attilathehun.daycounter.Counter;
 import attilathehun.daycounter.CounterManager;
 
 /**
- * This is the widget configuration activity, that gets open when you create a widget.
+ * This is the widget configuration activity, that gets open when you create or tap a widget.
  */
 public class WidgetActivity extends Activity {
 
     /**
      * When the activity is instantiated. It creates a dialog listing all the counters for the user to select the source data counter for the widget.
      *
-     * @param savedInstanceState yeah
+     * @param savedInstanceState yeah, like if I only knew what that is
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,9 +72,7 @@ public class WidgetActivity extends Activity {
         builder.setPositiveButton(getResources().getString(R.string.counter_dialog_positive), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface _dialog, int _which) {
-                if (!Boolean.parseBoolean(intent.getStringExtra("created"))) {
-                    CounterManager.getInstance().unbindWidgetOfId(mAppWidgetId);
-                }
+                CounterManager.getInstance().unbindWidgetOfId(mAppWidgetId);
                 CounterManager.getInstance().bindWidget(String.valueOf(rgroup.getCheckedRadioButtonId()), mAppWidgetId);
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(WidgetActivity.this);
                 //Update the App Widget with a RemoteViews layout by calling updateAppWidget(int, RemoteViews):

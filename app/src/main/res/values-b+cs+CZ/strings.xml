@@ -5,6 +5,8 @@
     <string name="about">O aplikaci</string>
     <string name="settings">Nastavení</string>
     <string name="counters">Countery</string>
+    <string name="service_label">Notifika\u010Dní služba</string>
+    <string name="service_description">Tato služba se stará o to, že se zobrazují oznámení a že jsou aktualizována.</string>
     <string name="notification_channel_name">Po\u010Det zbývajících dnů</string>
     <string name="notification_channel_description">Ukazuje, kolik dní zbývá</string>
     <string name="default_notification_name">\u010Cas běží</string>
@@ -21,7 +23,7 @@
     <string name="november">Listopad</string>
     <string name="december">Prosinec</string>
     <string name="counter_name_label">Název counteru</string>
-    <string name="counter_name_hint">Než mi bude 60</string>
+    <string name="counter_name_hint">Než mi bude 65</string>
     <string name="birth_date_label">Datum narození</string>
     <string name="birth_date_year_label">Rok</string>
     <string name="highest_estimated_age_label">Odhadovaný věk</string>
@@ -58,5 +60,14 @@
     <string name="invalid_input">Nevhodná hodnota</string>
     <string name="exported_to">Exportováno do %s</string>
     <string name="exported_to_json">Exportováno do %s.json</string>
-    <string name="no_counter_available">Nebyl zalezen žádný \u010Dasova\u010D</string>
+    <string name="no_counter_available">Nebyl nalezen žádný \u010Dasova\u010D</string>
+    <string name="close_dialog">Zavřít</string>
+    <string name="list_item_menu_edit">Upravit (přejmenovat)</string>
+    <string name="list_item_menu_duplicate">Duplikovat</string>
+    <string name="list_item_menu_delete">Smazat</string>
+    <string name="edit_counter_label">Upravit \u010Dasova\u010D</string>
+    <string name="about_dialog_application_description">Aplikace byla vytvořena v prostředí Sketchware Pro v programovacím jazyce Java. Jejím ú\u010Delem je každý den nám připomínat, jak krátké jsou naše životy.  Zdrojový kód je dostupný na adrese  https://github.com/AttiliaTheHun/DayCounter. Ikony byly vykradeny ze serveru https://icons8.com.</string>   
+    <string name="about_dialog_version_description">Verze 2.2 vytvořil AttilaTheHun</string>
+     <string name="storage_permission_required">Vyžadován přístup k úložišti</string>
+    <string name="permission_granted">Přístup udělen</string>
 </resources>

@@ -1,9 +1,9 @@
 package attilathehun.daycounter;
-
+ 
 import androidx.annotation.NonNull;
-
+ 
 import android.content.Context;
-
+ 
 /**
  * Provides a communication channel to entities that need to be notified when date changes.
  */

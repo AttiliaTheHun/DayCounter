@@ -1,46 +1,46 @@
 package attilathehun.daycounter;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.annotation.*;
-import androidx.appcompat.widget.Toolbar;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import com.google.android.material.appbar.AppBarLayout;
+import android.animation.*;
 import android.app.*;
-import android.os.*;
-import android.view.*;
-import android.view.View.*;
-import android.widget.*;
+import android.app.Activity;
 import android.content.*;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.*;
 import android.graphics.*;
 import android.graphics.drawable.*;
 import android.media.*;
 import android.net.*;
+import android.net.Uri;
+import android.os.*;
 import android.text.*;
 import android.text.style.*;
 import android.util.*;
-import android.webkit.*;
-import android.animation.*;
+import android.view.*;
+import android.view.View.*;
 import android.view.animation.*;
-import java.io.*;
-import java.util.*;
-import java.util.regex.*;
-import java.text.*;
-import org.json.*;
-import java.util.ArrayList;
-import android.widget.TextView;
-import android.widget.ListView;
+import android.webkit.*;
+import android.widget.*;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.app.Activity;
-import android.content.SharedPreferences;
-import android.content.Intent;
-import android.net.Uri;
-import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.TextView;
+import androidx.annotation.*;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.*;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.DialogFragment;
+import com.google.android.material.appbar.AppBarLayout;
+import java.io.*;
+import java.text.*;
+import java.util.*;
+import java.util.ArrayList;
+import java.util.regex.*;
+import org.json.*;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import androidx.core.content.ContextCompat;
@@ -160,28 +160,16 @@ public class SettingsActivity extends AppCompatActivity {
 					}
 					else {
 						if (_position == 2) {
-							action = "EXPORT_BYTES";
+							action = "VIEW_LOG";
 							_checkPermissions();
 						}
 						else {
 							if (_position == 3) {
-								action = "IMPORT_BYTES";
+								action = "CLEAR_LOG";
 								_checkPermissions();
 							}
 							else {
-								if (_position == 4) {
-									action = "VIEW_LOG";
-									_checkPermissions();
-								}
-								else {
-									if (_position == 5) {
-										action = "CLEAR_LOG";
-										_checkPermissions();
-									}
-									else {
-										
-									}
-								}
+								
 							}
 						}
 					}
@@ -202,24 +190,14 @@ public class SettingsActivity extends AppCompatActivity {
 					}
 					else {
 						if (_position == 2) {
-							SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.export_data_bytes_description));
+							SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.view_log_description));
 						}
 						else {
 							if (_position == 3) {
-								SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.import_data_bytes_description));
+								SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.clear_log_description));
 							}
 							else {
-								if (_position == 4) {
-									SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.view_log_description));
-								}
-								else {
-									if (_position == 5) {
-										SketchwareUtil.showMessage(getApplicationContext(), getResources().getString(R.string.clear_log_description));
-									}
-									else {
-										
-									}
-								}
+								
 							}
 						}
 					}
@@ -279,8 +257,6 @@ public class SettingsActivity extends AppCompatActivity {
 	public void _initListsAndViews() {
 		developer_options_list.add(getResources().getString(R.string.start_service));
 		developer_options_list.add(getResources().getString(R.string.refresh_widgets));
-		developer_options_list.add(getResources().getString(R.string.export_data_bytes));
-		developer_options_list.add(getResources().getString(R.string.import_data_bytes));
 		developer_options_list.add(getResources().getString(R.string.view_log));
 		developer_options_list.add(getResources().getString(R.string.clear_log));
 		developer_options_view.setAdapter(new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_list_item_1, developer_options_list));

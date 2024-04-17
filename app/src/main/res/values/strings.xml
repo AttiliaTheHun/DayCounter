@@ -49,12 +49,8 @@
     <string name="clear_log_description">Erase application log file</string>
     <string name="clear_data">Clear data</string>
     <string name="clear_data_description">Delete all counters</string>
-    <string name="export_data_bytes">Export (bytes)</string>
-    <string name="export_data_bytes_description">Export counters in the application format</string>
     <string name="export_data_json">Export (JSON)</string>
     <string name="export_data_json_description">Export counters in JSON format</string>
-    <string name="import_data_bytes">Import (bytes)</string>
-    <string name="import_data_bytes_description">Import counters in the application format</string>
     <string name="import_data_json">Import (JSON)</string>
     <string name="import_data_json_description">Import counters in the JSON format</string>
     <string name="fill_all_fields">Please fill out all the fields</string>
@@ -67,7 +63,7 @@
     <string name="list_item_menu_delete">Delete</string>
     <string name="no_counter_available">No counter available</string>
     <string name="edit_counter_label">Edit counter</string>
-    <string name="about_dialog_application_description">The application is coded using the Sketchware Pro IDE in the Java programming language. It is meant to remind us how short our lifes are every day. Source code is available at https://github.com/AttiliaTheHun/DayCounter. The icons are stolen from https://icons8.com.</string>
+    <string name="about_dialog_application_description"> DayCounter is a so-called productivity app intended to remind us constantly how much time we have left to do something, in days. It is completely open source, with repository at https://github.com/AttiliaTheHun/DayCounter. The icons have been stolen from https://icons8.com.</string>
     <string name="about_dialog_version_description">Version 2.2 made by AttilaTheHun</string>
     <string name="storage_permission_required">Storage access permission required</string>
     <string name="permission_granted">Permission granted</string>

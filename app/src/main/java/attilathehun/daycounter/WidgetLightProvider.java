@@ -1,7 +1,7 @@
 package attilathehun.daycounter;
-
+ 
 import java.util.Arrays;
-
+ 
 import android.appwidget.AppWidgetProvider;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -9,19 +9,19 @@ import android.content.Intent;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.widget.RemoteViews;
-
+ 
 import attilathehun.daycounter.Util;
 import attilathehun.daycounter.Counter;
 import attilathehun.daycounter.CounterManager;
 import attilathehun.daycounter.CounterEventListener;
 import attilathehun.daycounter.DateChangedListener;
 import attilathehun.daycounter.LocaleChangedListener;
-
+ 
 /**
  * This class manages the behavior of our light launcher windget(s).
  */
 public class WidgetLightProvider extends AppWidgetProvider implements CounterEventListener, DateChangedListener, LocaleChangedListener {
-
+ 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         //Util.log("WidgetLightProvider.onUpdate()");
@@ -32,7 +32,7 @@ public class WidgetLightProvider extends AppWidgetProvider implements CounterEve
             updateAppWidget(context, appWidgetManager, appWidgetId);
         }
     }
-
+ 
     /**
      * When a widget gets removed from the homescreen. Unbinds the widget.
      *
@@ -46,22 +46,22 @@ public class WidgetLightProvider extends AppWidgetProvider implements CounterEve
             CounterManager.getInstance().unbindWidgetOfId(appWidgetId);
         }
     }
-
+ 
     @Override
     public void onEnabled(Context context) {
-
+ 
     }
-
+ 
     @Override
     public void onDisabled(Context context) {
-
+ 
     }
-
+ 
     @Override
     public void onCounterNotificationStateChanged(Counter counter) {
-
+ 
     }
-
+ 
     /**
      * When a counter is destroyed. Resets the widget.
      *
@@ -88,7 +88,7 @@ public class WidgetLightProvider extends AppWidgetProvider implements CounterEve
         }
         this.updateAppWidget(context, manager, counter.getWidgetId());
     }
-
+ 
     /**
      * When a counter is edited. Refreshes the widget.
      *
@@ -114,17 +114,17 @@ public class WidgetLightProvider extends AppWidgetProvider implements CounterEve
         }
         this.updateAppWidget(context, manager, counter.getWidgetId());
     }
-
+ 
     @Override
     public void onDateChanged(Context context) {
         WidgetLightProvider.refresh(context);
     }
-
+ 
     @Override
     public void onLocaleChanged(Context context) {
         WidgetLightProvider.refresh(context);
     }
-
+ 
     /**
      * Updates the text on the widget's TextView to match the current day count.
      *
@@ -137,11 +137,11 @@ public class WidgetLightProvider extends AppWidgetProvider implements CounterEve
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_light);
         Counter counter = CounterManager.getInstance().getWidgetCounterForId(appWidgetId);
         Intent intent = new Intent(context, WidgetLightActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         views.setOnClickPendingIntent(R.id.linear1, pendingIntent);
-
+ 
         // When you remove the counter but not the widget
         if (counter == null) {
             views.setTextViewText(R.id.name_indicator, context.getResources().getString(R.string.counter_removed));
@@ -156,7 +156,7 @@ public class WidgetLightProvider extends AppWidgetProvider implements CounterEve
         appWidgetManager.updateAppWidget(appWidgetId, views);
         Util.clearContextIfEquals(context);
     }
-
+ 
     /**
      * Manually refreshes the widgets.
      */
@@ -168,12 +168,12 @@ public class WidgetLightProvider extends AppWidgetProvider implements CounterEve
         WidgetLightProvider myWidget = new WidgetLightProvider();
         myWidget.onUpdate(context, AppWidgetManager.getInstance(context), ids);
     }
-
+ 
     public static void registerListener() {
         final WidgetLightProvider instance = new WidgetLightProvider();
         Counter.addEventListener(instance);
         ServiceLauncher.addDateChangedListener(instance);
         ServiceLauncher.addLocaleChangedListener(instance);
     }
-
+ 
 }

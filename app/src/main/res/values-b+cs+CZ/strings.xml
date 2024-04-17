@@ -48,12 +48,8 @@
     <string name="refresh_widgets_description">Aktualizovat widgety na domovské obrazovce </string>
     <string name="clear_data">Vymazat data</string>
     <string name="clear_data_description">Smaže všechny countery</string>
-    <string name="export_data_bytes">Exportovat (v bytech)</string>
-    <string name="export_data_bytes_description">Exportuje countery ve formátu aplikace</string>
     <string name="export_data_json">Exportovat (v JSONu)</string>
     <string name="export_data_json_description">Exportuje countery ve formátu JSON</string>
-    <string name="import_data_bytes">Importovat (v bytech)</string>
-    <string name="import_data_bytes_description">Importuje countery ve formátu aplikace</string>
     <string name="import_data_json">Importovat (v JSONu)</string>
     <string name="import_data_json_description">Importuje countery ve formátu JSON</string>
     <string name="fill_all_fields">Prosím vyplňte všechna pole</string>
@@ -66,7 +62,7 @@
     <string name="list_item_menu_duplicate">Duplikovat</string>
     <string name="list_item_menu_delete">Smazat</string>
     <string name="edit_counter_label">Upravit \u010Dasova\u010D</string>
-    <string name="about_dialog_application_description">Aplikace byla vytvořena v prostředí Sketchware Pro v programovacím jazyce Java. Jejím ú\u010Delem je každý den nám připomínat, jak krátké jsou naše životy.  Zdrojový kód je dostupný na adrese  https://github.com/AttiliaTheHun/DayCounter. Ikony byly vykradeny ze serveru https://icons8.com.</string>   
+    <string name="about_dialog_application_description">DayCounter je aplikace pro zvýšení produktivity, míněná jako způsob neustálého připomínání, kolik \u010Dasu nám zbývá, na to, něco udělat, v jednotkách dnů.  Zdrojový kód je dostupný na adrese  https://github.com/AttiliaTheHun/DayCounter. Ikony byly vykradeny ze serveru https://icons8.com.</string>   
     <string name="about_dialog_version_description">Verze 2.2 vytvořil AttilaTheHun</string>
      <string name="storage_permission_required">Vyžadován přístup k úložišti</string>
     <string name="permission_granted">Přístup udělen</string>

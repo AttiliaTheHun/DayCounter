@@ -11,7 +11,7 @@ android {
 		applicationId "attilathehun.daycounter"
 		minSdkVersion 21
 		targetSdkVersion 28
-		versionCode 8
+		versionCode 9
 		versionName "2.2"
 	}
 	
